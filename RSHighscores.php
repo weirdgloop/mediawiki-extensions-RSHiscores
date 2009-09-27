@@ -25,16 +25,16 @@ if (!defined( 'MEDIAWIKI')) die();
 $wgExtensionFunctions[] = 'wfHighscores';
 $wgExtensionCredits['parserhook'][] = array(
     'path' => __FILE__,
-    'name' => 'RSHighScores',
-    'version' => '0.2.1',
+    'name' => 'RSHighscores',
+    'version' => '0.2.2',
     'description' => 'A parser function which returns raw player data from RuneScape Highscores Lite',
     'url' => 'http://runescape.wikia.com/wiki/User:Catcrewser/RSHighscores',
     'author' => '[http://runescape.wikia.com/wiki/User:Catcrewser TehKittyCat]'
 );
 
 # Set limit to prevent abuse
-if(!isset($rsLimit)) $rsLimit = 1;
-$rsTimes = 0;
+if(!isset($wgRSLimit)) $wgRSLimit = 1;
+$wgRSTimes = 0;
 
 # Initialise the parser function
 $wgHooks['LanguageGetMagic'][] = 'wfHighscores_Magic';
@@ -53,9 +53,9 @@ function wfHighscores_Magic(&$magicWords) {
 
 # Function for the parser function
 function wfHighscores_Render(&$parser, $player = '') {
-    global $rsTimes,$rsLimit;
-    if($rsTimes<$rsLimit || $rsLimit==0) {
-        $rsTimes++;
+    global $wgRSTimes,$wgRSLimit;
+    if($wgRSTimes<$wgRSLimit || $wgRSLimit==0) {
+        $wgRSTimes++;
         if($player!='') {
             $data = Http::get('http://hiscore.runescape.com/index_lite.ws?player='.urlencode($player),$info);
             if($data===false) {
