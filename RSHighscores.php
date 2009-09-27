@@ -26,11 +26,16 @@ $wgExtensionFunctions[] = 'wfHighscores';
 $wgExtensionCredits['parserhook'][] = array(
     'path' => __FILE__,
     'name' => 'RSHighScores',
-    'version' => '0.1',
+    'version' => '0.2',
     'description' => 'A parser function which returns raw player data from RuneScape Highscores Lite',
     'url' => 'http://runescape.wikia.com/wiki/User:Catcrewser/RSHighscores',
     'author' => '[http://runescape.wikia.com/wiki/User:Catcrewser TehKittyCat]'
 );
+
+# Set limit to prevent abuse
+if(!isset($rsLimit)) $rsLimit = 1;
+$rsTimes = 0;
+
 # Initialise the parser function
 $wgHooks['LanguageGetMagic'][] = 'wfHighscores_Magic';
 
@@ -48,17 +53,23 @@ function wfHighscores_Magic(&$magicWords) {
 
 # Function for the parser function
 function wfHighscores_Render(&$parser, $player = '') {
-    if($player!='') {
-        $data = Http::get('http://hiscore.runescape.com/index_lite.ws?player='.urlencode($player),$info);
-        if($data===false) {
-			return(0);
-        } elseif($info['response_code']==404) {
-            return(2);
+    global $rsTimes,$rsLimit;
+    if($rsTimes<$rsLimit) {
+        $rsTimes++;
+        if($player!='') {
+            $data = Http::get('http://hiscore.runescape.com/index_lite.ws?player='.urlencode($player),$info);
+            if($data===false) {
+    			return(0);
+            } elseif($info['response_code']==404) {
+                return(2);
+            } else {
+                return($data);
+            }
         } else {
-            return($data);
+            return(1);
         }
     } else {
-        return(1);
+        return(0);
     }
 }
 ## Possible return values
