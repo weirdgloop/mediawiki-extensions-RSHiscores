@@ -22,7 +22,7 @@
 if (!defined( 'MEDIAWIKI')) die();
 
 # Define a setup function
-$wgExtensionFunctions[] = 'wfHighscores';
+$wgHooks['ParserFirstCallInit'][] = 'wfHighscores';
 $wgExtensionCredits['parserhook'][] = array(
     'path' => __FILE__,
     'name' => 'RSHighscores',
@@ -40,9 +40,9 @@ $wgRSTimes = 0;
 $wgHooks['LanguageGetMagic'][] = 'wfHighscores_Magic';
 
 # Setup parser function 
-function wfHighscores() {
-    global $wgParser;
-    $wgParser->setFunctionHook('highscores', 'wfHighscores_Render');
+function wfHighscores(&$parser) {
+    $parser->setFunctionHook('highscores', 'wfHighscores_Render');
+	 return true;
 }
 
 # Parser function
@@ -57,7 +57,7 @@ function wfHighscores_Render(&$parser, $player = '') {
     if($wgRSTimes<$wgRSLimit || $wgRSLimit==0) {
         $wgRSTimes++;
         if($player!='') {
-            $data = Http::get('http://hiscore.runescape.com/index_lite.ws?player='.urlencode($player),$info);
+            $data = Http::get('http://services.runescape.com/m=hiscore/index_lite.ws?player='.urlencode($player),$info);
             if($data===false) {
     			return(0);
             } elseif($info['response_code']==404) {
