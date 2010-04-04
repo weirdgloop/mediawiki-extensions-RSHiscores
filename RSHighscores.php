@@ -20,9 +20,9 @@ if ( !defined( 'MEDIAWIKI' ) ) die();
 $wgHooks['ParserFirstCallInit'][] = 'wfHiscores';
 $wgExtensionCredits['parserhook'][] = array(
     'name' => 'RSHiscores',
-    'version' => '2.0',
+    'version' => '2.0.1',
     'description' => 'A parser function returning raw player data from RuneScape\'s Hiscores Lite',
-    'url' => 'http://runescape.wikia.com/wiki/User:Catcrewser/RSHighscores',
+    'url' => 'http://runescape.wikia.com/wiki/User:Catcrewser/RSHiscores',
     'author' => '[http://runescape.wikia.com/wiki/User_talk:Catcrewser TehKittyCat]'
 );
 
@@ -38,24 +38,33 @@ $wgHooks['LanguageGetMagic'][] = 'wfHiscores_Magic';
 
 # Setup parser function 
 function wfHiscores( &$parser ) {
-    $parser->setFunctionHook( 'hiscore', 'wfHiscores_Render' );
+    $parser->setFunctionHook( 'hs', 'wfHiscores_Render' );
 	 return true;
 }
 
 # Parser function
 function wfHiscores_Magic( &$magicWords ) {
-    $magicWords['hiscore'] = array( 0, 'hiscore' );
+    $magicWords['hs'] = array( 0, 'hs' );
     return true;
 }
 
+#Skills: 0-Overall(Default), 1-Attack, 2-Defence, 3-Constitution/Hitpoints, 5-Ranged, 6-Prayer, 7-Magic, 8-Cooking, 9-Woodcutting, 10-Fletching, 11-Fishing,
+# 12-Firemaking, 13-Crafting, 14-Smithing, 15-Mining, 16-Herblore, 17-Agility, 18-Thieving, 19-Slayer, 20-Farming, 21-Runecrafting, 22-Hunter,
+# 23-Construction, 24-Summoning, 25-Duel Tournament, 26-Bounty Hunter, 27-Bounty Hunter Rogue, 28-Fist of Guthix, 29-Mobilising Armies,
+# 30-B.A. Attacker, 31-B.A. Defender, 32-B.A. Collector, 33-B.A. Healer
+#Types: 0-Rank, 1-Level(Default), 2-Experience
+
 # Function for the parser function
-function wfHiscores_Render( &$parser, $player = '' ) {
+function wfHiscores_Render( &$parser, $player = '', $skill = 0, $type = 1 ) {
     global $wgRSch, $wgRSHiscoreCache, $wgRSLimit, $wgRSTimes;
     $player = trim( $player );
     if( $player == '' ) {
     	return 0;
     } elseif( array_key_exists( $player, $wgRSHiscoreCache ) ) {
-        return $wgRSHiscoreCache[$player];
+        $data = $wgRSHiscoreCache[$player];
+        $data = explode( "\n", $data, $skill );
+        $data = explode( ',', $data[$skill], $type);
+        return $data[$type];
     } elseif( $wgRSTimes < $wgRSLimit || $wgRSLimit == 0 ) {
         $wgRSTimes++;
         if( !isset( $wgRSch ) ) {
@@ -66,9 +75,12 @@ function wfHiscores_Render( &$parser, $player = '' ) {
 	    }
         curl_setopt( $wgRSch, CURLOPT_URL, 'http://services.runescape.com/m=hiscore/index_lite.ws?player='.urlencode( $player ) );
         if( $data = curl_exec( $wgRSch ) ) {
+        	$wgRSHiscoreCache[$player] = $data;
             $status = curl_getinfo( $wgRSch, CURLINFO_HTTP_CODE );
             if( $status == 200 ) {
-                return $wgRSHiscoreCache[$player] = trim( $data );
+            	$data = explode( "\n", $data, $skill+2 );
+            	$data = explode( ',', $data[$skill], $type+2 );
+                return $data[$type];
             } elseif( $status == 404 ) {
                 return $wgRSHiscoreCache[$player] = 1;
             }
