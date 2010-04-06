@@ -20,7 +20,7 @@ if ( !defined( 'MEDIAWIKI' ) ) die();
 $wgHooks['ParserFirstCallInit'][] = 'wfHiscores';
 $wgExtensionCredits['parserhook'][] = array(
     'name' => 'RSHiscores',
-    'version' => '2.0.1',
+    'version' => '2.0.2',
     'description' => 'A parser function returning raw player data from RuneScape\'s Hiscores Lite',
     'url' => 'http://runescape.wikia.com/wiki/User:Catcrewser/RSHiscores',
     'author' => '[http://runescape.wikia.com/wiki/User_talk:Catcrewser TehKittyCat]'
@@ -56,14 +56,16 @@ function wfHiscores_Magic( &$magicWords ) {
 
 # Function for the parser function
 function wfHiscores_Render( &$parser, $player = '', $skill = 0, $type = 1 ) {
-    global $wgRSch, $wgRSHiscoreCache, $wgRSLimit, $wgRSTimes;
+    global $wgRSch, $wgRSHiscoreCache, $wgRSLimit, $wgRSTimes, $wgHTTPTimeout;
     $player = trim( $player );
     if( $player == '' ) {
     	return 0;
     } elseif( array_key_exists( $player, $wgRSHiscoreCache ) ) {
         $data = $wgRSHiscoreCache[$player];
-        $data = explode( "\n", $data, $skill );
-        $data = explode( ',', $data[$skill], $type);
+        $data = explode( "\n", $data, $skill+2 );
+        if( !array_key_exists( $skill, $data ) ) return 4;
+        $data = explode( ',', $data[$skill], $type+2 );
+        if( !array_key_exists( $type, $data ) ) return 5;
         return $data[$type];
     } elseif( $wgRSTimes < $wgRSLimit || $wgRSLimit == 0 ) {
         $wgRSTimes++;
@@ -78,9 +80,12 @@ function wfHiscores_Render( &$parser, $player = '', $skill = 0, $type = 1 ) {
         	$wgRSHiscoreCache[$player] = $data;
             $status = curl_getinfo( $wgRSch, CURLINFO_HTTP_CODE );
             if( $status == 200 ) {
-            	$data = explode( "\n", $data, $skill+2 );
-            	$data = explode( ',', $data[$skill], $type+2 );
-                return $data[$type];
+            	$data = $wgRSHiscoreCache[$player];
+		        $data = explode( "\n", $data, $skill+2 );
+		        if( !array_key_exists( $skill, $data ) ) return 4;
+		        $data = explode( ',', $data[$skill], $type+2 );
+		        if( !array_key_exists( $type, $data ) ) return 5;
+		        return $data[$type];
             } elseif( $status == 404 ) {
                 return $wgRSHiscoreCache[$player] = 1;
             }
@@ -94,4 +99,6 @@ function wfHiscores_Render( &$parser, $player = '', $skill = 0, $type = 1 ) {
 ## If 1 is returned, then the player could not be found.(HTTP 404)
 ## If 2 is returned, then an error occurred.(Any response or lack there of HTTP 200/404)
 ## If 3 is returned, then the hiscores parser function limit was reached.(By default one, configurable with $wgRSLimit, limit is not affected by same username used repeatedly)
+## If 4 is returned, then the skill does not exist.
+## If 5 is returned, then the type does not exist.
 ## If anything else if returned, then it worked and that is the hiscores data.(Yay!)
