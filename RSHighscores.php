@@ -20,7 +20,7 @@ if ( !defined( 'MEDIAWIKI' ) ) die();
 $wgHooks['ParserFirstCallInit'][] = 'wfHiscores';
 $wgExtensionCredits['parserhook'][] = array(
     'name' => 'RSHiscores',
-    'version' => '2.0.2',
+    'version' => '2.0.3',
     'description' => 'A parser function returning raw player data from RuneScape\'s Hiscores Lite',
     'url' => 'http://runescape.wikia.com/wiki/User:Catcrewser/RSHiscores',
     'author' => '[http://runescape.wikia.com/wiki/User_talk:Catcrewser TehKittyCat]'
@@ -62,7 +62,7 @@ function wfHiscores_Render( &$parser, $player = '', $skill = 0, $type = 1 ) {
     	return 0;
     } elseif( array_key_exists( $player, $wgRSHiscoreCache ) ) {
         $data = $wgRSHiscoreCache[$player];
-        $data = explode( "\n", $data, $skill+2 );
+        $data = explode( "\n", rtrim($data), $skill+2 );
         if( !array_key_exists( $skill, $data ) ) return 4;
         $data = explode( ',', $data[$skill], $type+2 );
         if( !array_key_exists( $type, $data ) ) return 5;
