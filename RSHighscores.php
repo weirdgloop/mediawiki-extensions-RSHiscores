@@ -12,10 +12,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
- 
+
 # Only execute extension through MediaWiki
 if ( !defined( 'MEDIAWIKI' ) ) die();
- 
+
 # Define a setup function
 $wgHooks['ParserFirstCallInit'][] = 'wfHiscores';
 $wgExtensionCredits['parserhook'][] = array(
@@ -25,29 +25,34 @@ $wgExtensionCredits['parserhook'][] = array(
     'url' => 'http://runescape.wikia.com/wiki/User:Catcrewser/RSHiscores',
     'author' => '[http://runescape.wikia.com/wiki/User_talk:Catcrewser TehKittyCat]'
 );
- 
+
 # Set limit to prevent abuse, defaults to two, which allows for comparison of hiscore data
 if( !isset( $wgRSLimit ) ) $wgRSLimit = 2;
 $wgRSTimes = 0;
- 
+
 # Cache of hiscore fetches
 $wgRSHiscoreCache = array();
- 
+
 # Initialise the parser function
 $wgHooks['LanguageGetMagic'][] = 'wfHiscores_Magic';
- 
-# Setup parser function 
+
+/**
+ * Setup parser function
+ *
+ * @param Parser $parser
+ * @return bool
+ */
 function wfHiscores( &$parser ) {
     $parser->setFunctionHook( 'hs', 'wfHiscores_Render' );
      return true;
 }
- 
+
 # Parser function
 function wfHiscores_Magic( &$magicWords ) {
     $magicWords['hs'] = array( 0, 'hs' );
     return true;
 }
- 
+
 #Skills: 0-Overall(Default), 1-Attack, 2-Defence, 3-Strength, 4-Constitution(formerly Hitpoints), 5-Ranged, 6-Prayer, 7-Magic, 8-Cooking, 9-Woodcutting, 10-Fletching, 11-Fishing,
 # 12-Firemaking, 13-Crafting, 14-Smithing, 15-Mining, 16-Herblore, 17-Agility, 18-Thieving, 19-Slayer, 20-Farming, 21-Runecrafting, 22-Hunter,
 # 23-Construction, 24-Summoning, 25-Dungeoneering, 26-Duel Tournament, 27-Bounty Hunter, 28-Bounty Hunter Rogue, 29-Fist of Guthix, 30-Mobilising Armies,
