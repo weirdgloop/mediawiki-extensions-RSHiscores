@@ -10,7 +10,7 @@ Issues and pull requests should filed [here](https://github.com/TehKittyCat/RSHi
 2. Add the following to your `LocalSettings.php`
 ```php
 // RSHiscores
-require_once( 'extensions/RSHiscores.php' );
+require_once( 'extensions/RSHiscores/RSHiscores.php' );
 
 // You may set $wgRSLimit in LocalSettings.php to adjust the max number of calls allowed
 // Setting to 0 allows unlimited calls.
