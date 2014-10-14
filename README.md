@@ -2,7 +2,7 @@
 
 A MediaWiki extension that provides easy access to [RuneScape's Hiscores](http://services.runescape.com/m=hiscore/overview) for use in wikitext and JS calculators. Originally designed for the [RuneScape Wiki](http://runescape.wikia.com).
 
-Issues and pull requests should filed [here](https://github.com/TehKittyCat/RSHiscores). However, the version used by [Wikia](www.wikia.com) (and the RuneScape Wiki) might be behind this version. For the version used by Wikia see [here](https://github.com/Wikia/app/tree/dev/extensions/3rdparty/RSHighscores). Alternatively, see the ['wikia' branch](https://github.com/TehKittyCat/RSHiscores/tree/wikia) for the currently submitted version.
+Issues and pull requests should filed [here](https://github.com/TehKittyCat/RSHiscores). However, the version used by [Wikia](http://www.wikia.com) (and the RuneScape Wiki) might be behind this version. For the version used by Wikia see [here](https://github.com/Wikia/app/tree/dev/extensions/3rdparty/RSHighscores). Alternatively, see the ['wikia' branch](https://github.com/TehKittyCat/RSHiscores/tree/wikia) for the currently submitted version.
 
 # Installation
 
