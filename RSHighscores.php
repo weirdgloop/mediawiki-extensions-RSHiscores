@@ -28,8 +28,8 @@ $wgExtensionCredits['parserhook'][] = array(
 	),
 );
 
-$wgExtensionMessagesFiles['RSHiscores'] = __DIR__ . '/RSHiscores.i18n.php';
-$wgExtensionMessagesFiles['RSHiscoresMagic'] = __DIR__ . '/RSHiscores.i18n.magic.php';
+$wgExtensionMessagesFiles['RSHiscores'] = __DIR__ . '/RSHighscores.i18n.php';
+$wgExtensionMessagesFiles['RSHiscoresMagic'] = __DIR__ . '/RSHighscores.i18n.magic.php';
 
 $wgHooks['ParserFirstCallInit'][] = 'wfHiscores';
 
