@@ -100,4 +100,3 @@ If there is an error in the usage or request, one of the following codes will be
 | E    | Then the hiscores parser function limit was reached.                              |
 | F    | Then the skill does not exist.                                                    |
 | G    | The type does not exist.                                                          |
-| H<*> | This is debug mode, read the source to figure out the meaning.                    |
