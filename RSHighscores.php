@@ -21,11 +21,9 @@ $wgExtensionCredits['parserhook'][] = array(
 	'path'			=> __FILE__,
 	'name'			=> 'RSHiscores',
 	'version'		=> '3.0.0-dev',
-	'description-msg'	=> 'rshiscores-desc',
+	'descriptionmsg'	=> 'rshiscores-desc',
 	'url'			=> 'https://github.com/TehKittyCat/RSHiscores',
-	'author'		=> array(
-		'[http://runescape.wikia.com/wiki/User_talk:Catcrewser TehKittyCat]',
-	),
+	'author'		=> '[http://runescape.wikia.com/wiki/User_talk:TehKittyCat TehKittyCat]',
 );
 
 $wgExtensionMessagesFiles['RSHiscores'] = __DIR__ . '/RSHighscores.i18n.php';
@@ -66,7 +64,7 @@ function wfHiscores( &$parser ) {
  * @param $type
  * @param $debug
  * @return string
- * @todo Add support for returining the raw data
+ * @todo Add support for returning the raw data
  */
 function wfHiscores_Render( &$parser, $player = '', $skill = 0, $type = 1, $debug = false ) {
 	global $wgRSch, $wgRSHiscoreCache, $wgRSLimit, $wgRSTimes, $wgHTTPTimeout;

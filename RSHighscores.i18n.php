@@ -12,5 +12,5 @@ $messages = array();
  * English (English)
  */
 $messages['en'] = array(
-	'rshiscores-desc' => 'A parser function returning raw player data from RuneScape\'s Hiscores Lite',
+	'rshiscores-desc' => 'Provides access to RuneScape\'s Hiscores data for use in wikitext and calculators.',
 );
