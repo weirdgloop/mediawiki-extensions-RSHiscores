@@ -33,7 +33,8 @@ If an error occurs, then an error code will be returned. See [Errors](#errors) f
 ## Skills
 | Number | Skill/Activity                     |
 | ------ | ---------------------------------- |
-| 0      | Overall (default)                  |
+| -1     | Returns the raw data. (default)    |
+| 0      | Overall                            |
 | 1      | Attack                             |
 | 2      | Defence                            |
 | 3      | Strength                           |

@@ -11,22 +11,101 @@ class RSHiscores {
 	 * @return bool
 	 */
 	public static function register( &$parser ) {
-		$parser->setFunctionHook( 'hs', 'RSHiscores::render' );
+		$parser->setFunctionHook( 'hs', 'RSHiscores::renderHiscores' );
 		return true;
+	}
+
+	/**
+	 * Retrieve the raw hiscores data from RuneScape.
+	 *
+	 * @param string $player Player's display name.
+	 * @return string Raw hiscores data
+	 */
+	private static function retrieveHiscores( $player ) {
+		global $wgHTTPTimeout;
+
+		// Setup the cURL handler if not previously initialised.
+		if ( self::$ch == NULL ) {
+			wfDebugLog( 'RSHiscores', 'Initialised cURL handler.' );
+
+			self::$ch = curl_init();
+			curl_setopt( self::$ch, CURLOPT_TIMEOUT, $wgHTTPTimeout );
+			curl_setopt( self::$ch, CURLOPT_RETURNTRANSFER, TRUE );
+		}
+
+		curl_setopt( self::$ch, CURLOPT_URL, 'http://services.runescape.com/m=hiscore/index_lite.ws?player=' . urlencode( $player ) );
+
+		if ( $data = curl_exec( self::$ch ) ) {
+			$status = curl_getinfo( self::$ch, CURLINFO_HTTP_CODE );
+
+			if ( $status == 200 ) {
+				return $data;
+			} elseif ( $status == 404 ) {
+				// The player could not be found.
+				return 'B';
+			}
+
+			// An unexpected HTTP status code was returned, so report it.
+			return 'D'.$status;
+		}
+
+		// An unexpected curl error occurred, so report it.
+		$errno = curl_errno ( self::$ch );
+
+		if( $errno ) {
+			return 'C'.$errno;
+		}
+
+		// Should be impossible, but odd things happen, so handle it.
+		return 'C';
+	}
+
+	/**
+	 * Parse the hiscores data.
+	 *
+	 * @param string $data
+	 * @param int $skill Index representing the requested skill.
+	 * @param int $type Index representing the requested type of data for the given skill.
+	 * @return string Requested portion of the hiscores data.
+	 */
+	private static function parseHiscores( $data, $skill, $type ) {
+		/*
+		 * Check to see if an error has already occurred.
+		 * If so, return the error now, otherwise the wrong error will be
+		 * returned. Some errors have int statuses, so only check first char.
+		 */
+		if ( ctype_alpha ( $data{0} ) ) {
+			return $data;
+		}
+
+		$data = explode( "\n", $data, $skill + 2 );
+
+		if ( !array_key_exists( $skill, $data ) ) {
+			// The skill does not exist.
+			return 'F';
+		}
+
+		$data = explode( ',', $data[$skill], $type + 2 );
+
+		if ( !array_key_exists( $type, $data ) ) {
+			// The type does not exist.
+			return 'G';
+		}
+
+		return $data[$type];
 	}
 
 	/**
 	 * <doc>
 	 *
 	 * @param $parser Parser
-	 * @param $player
-	 * @param $skill
-	 * @param $type
+	 * @param string $player Player's display name. Can not be empty.
+	 * @param int $skill Index representing the requested skill. Leave as -1 for requesting the raw data.
+	 * @param int $type Index representing the requested type of data for the given skill.
 	 * @return string
-	 * @todo Add support for returning the raw data
 	 */
-	public static function render( &$parser, $player = '', $skill = 0, $type = 1) {
-		global $wgRSLimit, $wgHTTPTimeout;
+	public static function renderHiscores( &$parser, $player = '', $skill = -1, $type = 1 ) {
+		global $wgRSLimit;
 
 		$player = trim( $player );
 
@@ -35,90 +114,36 @@ class RSHiscores {
 			return 'A';
 
 		} elseif ( array_key_exists( $player, self::$cache ) ) {
-			wfDebugLog( 'RSHiscores', 'Cached hiscores data.' );
+			wfDebugLog( 'RSHiscores', 'Retrieved cached hiscores data.' );
+
 			// Get the hiscores data from the cache.
 			$data = self::$cache[$player];
 
-			/*
-			 * Check to see if an error has already occurred, if so then return
-			 * the error otherwise will return wrong error and waste a bit of
-			 * resource. Checks first char as some errors have integer statuses.
-			 */
-			if ( ctype_alpha ( $data{0} ) ) {
-				return $data;
-			}
-
-			$data = explode( "\n", rtrim($data), $skill + 2 );
-
-			if ( !array_key_exists( $skill, $data ) ) {
-				// The skill does not exist.
-				return 'F';
-			}
-
-			$data = explode( ',', $data[$skill], $type + 2 );
-
-			if ( !array_key_exists( $type, $data ) ) {
-				// The type does not exist.
-				return 'G';
-			}
-
-			return $data[$type];
 		} elseif ( self::$times < $wgRSLimit || $wgRSLimit == 0 ) {
+			wfDebugLog( 'RSHiscores', 'Retrieved fresh hiscores data.' );
+
+			// Update the name limit counter.
 			self::$times++;
 
-			// Setup the cURL handler if not previously initialised.
-			if ( self::$ch == NULL ) {
-				wfDebugLog( 'RSHiscores', 'Initialised cURL handler.' );
-				self::$ch = curl_init();
-				curl_setopt( self::$ch, CURLOPT_TIMEOUT, $wgHTTPTimeout );
-				curl_setopt( self::$ch, CURLOPT_RETURNTRANSFER, TRUE );
-			}
+			// Get the hiscores data from the site.
+			$data = self::retrieveHiscores( $player );
 
-			curl_setopt( self::$ch, CURLOPT_URL, 'http://services.runescape.com/m=hiscore/index_lite.ws?player=' . urlencode( $player ) );
+			// Add the hiscores data to the cache.
+			self::$cache[$player] = $data;
 
-			if ( $data = curl_exec( self::$ch ) ) {
-				self::$cache[$player] = $data;
-				$status = curl_getinfo( self::$ch, CURLINFO_HTTP_CODE );
-
-				if ( $status == 200 ) {
-					$data = self::$cache[$player];
-					$data = explode( "\n", $data, $skill + 2 );
-
-					if ( !array_key_exists( $skill, $data ) ) {
-						// The skill does not exist.
-						return 'F';
-					}
-
-					$data = explode( ',', $data[$skill], $type + 2 );
-
-					if ( !array_key_exists( $type, $data ) ) {
-						// The type does not exist.
-						return 'G';
-					}
-
-					return $data[$type];
-
-				} elseif ( $status == 404 ) {
-					// The player could not be found.
-					return self::$cache[$player] = 'B';
-				}
-
-				// An unexpected HTTP status code was returned, so report it.
-				return self::$cache[$player] = 'D'.$status;
-			}
-
-			// An unexpected curl error occurred, so report it.
-			$errno = curl_errno ( self::$ch );
-
-			if( $errno ) {
-				return self::$cache[$player] = 'C'.$errno;
-			}
-
-			// Should be impossible, but odd things happen, so handle it.
-			return self::$cache[$player] = 'C';
 		} else {
 			// The name limit set by $wgRSLimit was reached.
 			return 'E';
+		}
+
+		/*
+		 * Finally, return the raw string for use in JS calcs,
+		 * or if requested, parse the hiscores data.
+		 */
+		if ( $skill < 0 ) {
+			return $data;
+		} else {
+			return self::parseHiscores( $data, $skill, $type );
 		}
 	}
 }
