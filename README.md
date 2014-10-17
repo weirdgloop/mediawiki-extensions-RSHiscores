@@ -10,12 +10,14 @@ Issues and pull requests should filed [here](https://github.com/TehKittyCat/RSHi
 2. Add the following to your `LocalSettings.php`
 ```php
 // RSHiscores
-require_once( 'extensions/RSHiscores/RSHiscores.php' );
+require_once( 'extensions/RSHiscores/RSHighscores.php' );
 
-// You may set $wgRSLimit in LocalSettings.php to adjust the max number of calls allowed
-// Setting to 0 allows unlimited calls.
-// If more than $wgRSLimit calls are made, then 3 is returned for the calls over the limit.
-// This example allows 2 calls to {{#hs}}
+/**
+ * You may set $wgRSLimit in LocalSettings.php to adjust the maximum number of
+ * names allowed to be called per page. Setting to 0 removes the limit.
+ * If more than $wgRSLimit calls are made, then 'E' is returned for the name
+ * calls over the limit. This example allows for 2 name calls to {{#hs}}.
+ */
 $wgRSLimit = 2;
 ```
 
@@ -97,6 +99,6 @@ If there is an error in the usage or request, one of the following codes will be
 | B    | The player could not be found.                                                                                                         |
 | C<#> | A curl error occurred, if it's form of C<#>, check the number [here](http://curl.haxx.se/libcurl/c/libcurl-errors.html) for the cause. |
 | D<#> | An unexpected HTTP status was returned, check the number [here](http://en.wikipedia.org/wiki/List_of_HTTP_status_codes) for the cause. |
-| E    | The hiscores parser function limit was reached. This is by default 2 player names.                                                     |
+| E    | The name call limit was reached. This is by default 2 player names. This is not a limit on the number of function calls.               |
 | F    | The skill does not exist.                                                                                                              |
 | G    | The type does not exist.                                                                                                               |
