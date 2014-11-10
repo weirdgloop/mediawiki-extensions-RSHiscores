@@ -117,6 +117,8 @@ class RSHiscores {
 		global $wgRSLimit;
 
 		if ( $hs != 'rs3' && $hs != 'osrs' ) {
+			// RSHiscores 3.0 breaks backward-compatibility. Add a tracking category to allow fixing existing usage.
+			$parser->addTrackingCategory( 'rshiscores-error-category' );
 			// Unknown or unsupported hiscores API.
 			return 'H';
 		}
