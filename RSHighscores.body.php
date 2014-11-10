@@ -18,22 +18,30 @@ class RSHiscores {
 	/**
 	 * Retrieve the raw hiscores data from RuneScape.
 	 *
+	 * @param string $hs Which hiscores API to retrieve from.
 	 * @param string $player Player's display name.
 	 * @return string Raw hiscores data
 	 */
-	private static function retrieveHiscores( $player ) {
+	private static function retrieveHiscores( $hs, $player ) {
 		global $wgHTTPTimeout;
+
+		if ( $hs == 'rs3' ) {
+			$url = 'http://services.runescape.com/m=hiscore/index_lite.ws?player=';
+		} elseif ( $hs == 'osrs' ) {
+			$url = 'http://services.runescape.com/m=hiscore_oldschool/index_lite.ws?player=';
+		} else {
+			// Unknown or unsupported hiscores API.
+			return 'H';
+		}
 
 		// Setup the cURL handler if not previously initialised.
 		if ( self::$ch == NULL ) {
-			wfDebugLog( 'RSHiscores', 'Initialised cURL handler.' );
-
 			self::$ch = curl_init();
 			curl_setopt( self::$ch, CURLOPT_TIMEOUT, $wgHTTPTimeout );
 			curl_setopt( self::$ch, CURLOPT_RETURNTRANSFER, TRUE );
 		}
 
-		curl_setopt( self::$ch, CURLOPT_URL, 'http://services.runescape.com/m=hiscore/index_lite.ws?player=' . urlencode( $player ) );
+		curl_setopt( self::$ch, CURLOPT_URL, $url . urlencode( $player ) );
 
 		if ( $data = curl_exec( self::$ch ) ) {
 			$status = curl_getinfo( self::$ch, CURLINFO_HTTP_CODE );
@@ -99,13 +107,19 @@ class RSHiscores {
 	 * <doc>
 	 *
 	 * @param $parser Parser
+	 * @param string $hs Which hiscores API to use.
 	 * @param string $player Player's display name. Can not be empty.
 	 * @param int $skill Index representing the requested skill. Leave as -1 for requesting the raw data.
 	 * @param int $type Index representing the requested type of data for the given skill.
 	 * @return string
 	 */
-	public static function renderHiscores( &$parser, $player = '', $skill = -1, $type = 1 ) {
+	public static function renderHiscores( &$parser, $hs = 'rs3', $player = '', $skill = -1, $type = 1 ) {
 		global $wgRSLimit;
+
+		if ( $hs != 'rs3' && $hs != 'osrs' ) {
+			// Unknown or unsupported hiscores API.
+			return 'H';
+		}
 
 		$player = trim( $player );
 
@@ -113,23 +127,19 @@ class RSHiscores {
 			// No name was entered.
 			return 'A';
 
-		} elseif ( array_key_exists( $player, self::$cache ) ) {
-			wfDebugLog( 'RSHiscores', 'Retrieved cached hiscores data.' );
-
+		} elseif ( array_key_exists( $player, self::$cache ) && array_key_exists( $player, self::$cache[$hs] ) ) {
 			// Get the hiscores data from the cache.
-			$data = self::$cache[$player];
+			$data = self::$cache[$hs][$player];
 
 		} elseif ( self::$times < $wgRSLimit || $wgRSLimit == 0 ) {
-			wfDebugLog( 'RSHiscores', 'Retrieved fresh hiscores data.' );
-
 			// Update the name limit counter.
 			self::$times++;
 
 			// Get the hiscores data from the site.
-			$data = self::retrieveHiscores( $player );
+			$data = self::retrieveHiscores( $hs, $player );
 
 			// Add the hiscores data to the cache.
-			self::$cache[$player] = $data;
+			self::$cache[$hs][$player] = $data;
 
 		} else {
 			// The name limit set by $wgRSLimit was reached.

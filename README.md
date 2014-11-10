@@ -23,12 +23,19 @@ $wgRSLimit = 2;
 
 # Usage
 
-`{{#hs:Name|Skill|Type}}`
-- `Name` is the name of the player to get data for
+`{{#hs:API|Name|Skill|Type}}`
+- `API` is the name of the hiscores API to get data from.
+- `Name` is the name of the player to get data for.
 - `Skill` is a number that refers to a skill or activity as found in the hiscores API, see [Skills](#skills) for valid values.
 - `Type` is a number that referes to the type of data to return, see [Types](#types) for valid values.
 
 If an error occurs, then an error code will be returned. See [Errors](#errors) for possible errors.
+
+##API
+| Name   | API                   |
+| ------ | --------------------- |
+| rs3    | RuneScape (Current)   |
+| osrs   | Old School            |
 
 ## Skills
 | Number | Skill/Activity                     |
@@ -103,3 +110,4 @@ If there is an error in the usage or request, one of the following codes will be
 | E    | The name call limit was reached. This is by default 2 player names. This is not a limit on the number of function calls.               |
 | F    | The skill does not exist.                                                                                                              |
 | G    | The type does not exist.                                                                                                               |
+| H    | The API is unknown or unsupported.                                                                                                     |
