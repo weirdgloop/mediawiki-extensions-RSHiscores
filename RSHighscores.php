@@ -25,7 +25,8 @@ $wgExtensionCredits['parserhook'][] = array(
 	'url'			=> 'https://github.com/TehKittyCat/RSHiscores',
 	'author'		=> array(
 		'[http://runescape.wikia.com/wiki/User_talk:TehKittyCat TehKittyCat]',
-		'[http://runescape.wikia.com/wiki/User:Cqm Cqm]'
+		'[http://runescape.wikia.com/wiki/User:Cqm Cqm]',
+	),
 );
 
 $wgAutoloadClasses['RSHiscores'] = __DIR__ . '/RSHighscores.body.php';
