@@ -106,58 +106,27 @@ class RSHiscores {
 	}
 
 	/**
-	 * Handle errors in the result.
-	 * Errors are marked by letters being used as the first character, with an optional code after.
+	 * Attempt to lookup hiscore data in the cache, or looks it up in the API if not found.
 	 *
-	 * @param $parser Parser
-	 * @param $data 
-	 * @return string
-	 */
-	private static function handleError( &$parser, $data ) {
-		$first = $data{0};
-
-		if ( ctype_alpha( $first ) ) ) {
-			$parser->addTrackingCategory( 'rshiscores-error-category' );
-			
-			// Pass any error codes to the returned message as parameters.
-			if ( strlen( $data ) > 1 ) {
-				$msg = wfMessage( 'rshiscores-error-{$first}' )
-					->params( substr( $data, 1 ) )
-					->parse();
-			} else {
-				$msg = wfMessage( 'rshiscores-error-{$first}' )->parse();
-			}
-
-			// Return a format compatibl with #iferror.
-			return '<span class="error">' . $msg . '</span>';
-		}
-		
-		return $data;
-	}
-
-	/**
-	 * <doc>
-	 *
-	 * @param $parser Parser
 	 * @param string $hs Which hiscores API to use.
 	 * @param string $player Player's display name. Can not be empty.
 	 * @param int $skill Index representing the requested skill. Leave as -1 for requesting the raw data.
 	 * @param int $type Index representing the requested type of data for the given skill.
 	 * @return string
 	 */
-	public static function renderHiscores( &$parser, $hs = 'rs3', $player = '', $skill = -1, $type = 1 ) {
+	private static function getHiscores( $hs = 'rs3', $player = '', $skill = -1, $type = 1 ) {
 		global $wgRSLimit;
 
 		if ( $hs != 'rs3' && $hs != 'osrs' ) {
 			// Unknown or unsupported hiscores API.
-			return self::handleError( &$parser, 'H' );
+			return 'H';
 		}
 
 		$player = trim( $player );
 
 		if( $player == '' ) {
 			// No name was entered.
-			return self::handleError( &$parser, 'A' );
+			return 'A';
 
 		} elseif ( array_key_exists( $hs, self::$cache ) && array_key_exists( $player, self::$cache[$hs] ) ) {
 			// Get the hiscores data from the cache.
@@ -177,16 +146,48 @@ class RSHiscores {
 			self::$cache[$hs][$player] = $data;
 		} else {
 			// The name limit set by $wgRSLimit was reached.
-			return self::handleError( &$parser, 'E' );
+			return 'E';
 		}
 
 		// Finally, return the raw string for use in JS calcs,
 		// or if requested, parse the hiscores data.
 		if ( $skill < 0 ) {
-			return self::handleError( &$parser, $data );
+			return $data;
 		} else {
-			$ret = self::parseHiscores( $data, $skill, $type );
-			return self::handleError( &$parser, $ret );
+			return self::parseHiscores( $data, $skill, $type );
 		}
+	}
+
+	/**
+	 * Gets requested hiscore data and handles any returned error codes.
+	 *
+	 * @param $parser Parser
+	 * @param string $hs Which hiscores API to use.
+	 * @param string $player Player's display name. Can not be empty.
+	 * @param int $skill Index representing the requested skill. Leave as -1 for requesting the raw data.
+	 * @param int $type Index representing the requested type of data for the given skill.
+	 * @return string
+	 */
+	public static function renderHiscores( &$parser, $hs = 'rs3', $player = '', $skill = -1, $type = 1 ) {
+		$ret = self::getHiscores( $hs, $player, $skill, $type );
+		$first = $ret{0};
+
+		if ( ctype_alpha( $first ) ) {
+			$parser->addTrackingCategory( 'rshiscores-error-category' );
+
+			// Pass any error codes to the returned message as parameters.
+			if ( strlen( $ret ) > 1 ) {
+				$msg = wfMessage( 'rshiscores-error-' . $first )
+					->params( substr( $data, 1 ) )
+					->parse();
+			} else {
+				$msg = wfMessage( 'rshiscores-error-' . $first )->parse();
+			}
+
+			// Return an error format compatible with #iferror.
+			return '<span class="error">' . $msg . '</span>';
+		}
+
+		return $ret;
 	}
 }
