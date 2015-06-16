@@ -1,4 +1,8 @@
 <?php
+/**
+ * <doc>
+ */
+
 class RSHiscores {
 	public static $ch = NULL;
 	public static $cache = array();
@@ -54,14 +58,14 @@ class RSHiscores {
 			}
 
 			// An unexpected HTTP status code was returned, so report it.
-			return 'D'.$status;
+			return 'D' . $status;
 		}
 
 		// An unexpected curl error occurred, so report it.
-		$errno = curl_errno ( self::$ch );
+		$errno = curl_errno( self::$ch );
 
 		if( $errno ) {
-			return 'C'.$errno;
+			return 'C' . $errno;
 		}
 
 		// Should be impossible, but odd things happen, so handle it.
@@ -77,12 +81,10 @@ class RSHiscores {
 	 * @return string Requested portion of the hiscores data.
 	 */
 	private static function parseHiscores( $data, $skill, $type ) {
-		/*
-		 * Check to see if an error has already occurred.
-		 * If so, return the error now, otherwise the wrong error will be
-		 * returned. Some errors have int statuses, so only check first char.
-		 */
-		if ( ctype_alpha ( $data{0} ) ) {
+		// Check to see if an error has already occurred.
+		// If so, return the error now, otherwise the wrong error will be
+		// returned. Some errors have int statuses, so only check first char.
+		if ( ctype_alpha( $data{0} ) ) {
 			return $data;
 		}
 
@@ -104,6 +106,36 @@ class RSHiscores {
 	}
 
 	/**
+	 * Handle errors in the result.
+	 * Errors are marked by letters being used as the first character, with an optional code after.
+	 *
+	 * @param $parser Parser
+	 * @param $data 
+	 * @return string
+	 */
+	private static function handleError( &$parser, $data ) {
+		$first = $data{0};
+
+		if ( ctype_alpha( $first ) ) ) {
+			$parser->addTrackingCategory( 'rshiscores-error-category' );
+			
+			// Pass any error codes to the returned message as parameters.
+			if ( strlen( $data ) > 1 ) {
+				$msg = wfMessage( 'rshiscores-error-{$first}' )
+					->params( substr( $data, 1 ) )
+					->parse();
+			} else {
+				$msg = wfMessage( 'rshiscores-error-{$first}' )->parse();
+			}
+
+			// Return a format compatibl with #iferror.
+			return '<span class="error">' . $msg . '</span>';
+		}
+		
+		return $data;
+	}
+
+	/**
 	 * <doc>
 	 *
 	 * @param $parser Parser
@@ -117,18 +149,15 @@ class RSHiscores {
 		global $wgRSLimit;
 
 		if ( $hs != 'rs3' && $hs != 'osrs' ) {
-			// RSHiscores 3.0 breaks backward-compatibility. Add a tracking category to allow fixing existing usage.
-			$parser->addTrackingCategory( 'rshiscores-error-category' );
-
 			// Unknown or unsupported hiscores API.
-			return 'H';
+			return self::handleError( &$parser, 'H' );
 		}
 
 		$player = trim( $player );
 
 		if( $player == '' ) {
 			// No name was entered.
-			return 'A';
+			return self::handleError( &$parser, 'A' );
 
 		} elseif ( array_key_exists( $hs, self::$cache ) && array_key_exists( $player, self::$cache[$hs] ) ) {
 			// Get the hiscores data from the cache.
@@ -141,25 +170,23 @@ class RSHiscores {
 			// Get the hiscores data from the site.
 			$data = self::retrieveHiscores( $hs, $player );
 
-			// escape the result as it's from an external API
+			// Escape the result as it's from an external API.
 			$data = htmlspecialchars( $data, ENT_QUOTES );
 
 			// Add the hiscores data to the cache.
 			self::$cache[$hs][$player] = $data;
-
 		} else {
 			// The name limit set by $wgRSLimit was reached.
-			return 'E';
+			return self::handleError( &$parser, 'E' );
 		}
 
-		/*
-		 * Finally, return the raw string for use in JS calcs,
-		 * or if requested, parse the hiscores data.
-		 */
+		// Finally, return the raw string for use in JS calcs,
+		// or if requested, parse the hiscores data.
 		if ( $skill < 0 ) {
-			return $data;
+			return self::handleError( &$parser, $data );
 		} else {
-			return self::parseHiscores( $data, $skill, $type );
+			$ret = self::parseHiscores( $data, $skill, $type );
+			return self::handleError( &$parser, $ret );
 		}
 	}
 }

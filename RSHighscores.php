@@ -20,10 +20,12 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 $wgExtensionCredits['parserhook'][] = array(
 	'path'			=> __FILE__,
 	'name'			=> 'RSHiscores',
-	'version'		=> '3.0.1-dev',
+	'version'		=> '3.1.1-dev',
 	'descriptionmsg'	=> 'rshiscores-desc',
 	'url'			=> 'https://github.com/TehKittyCat/RSHiscores',
-	'author'		=> '[http://runescape.wikia.com/wiki/User_talk:TehKittyCat TehKittyCat]',
+	'author'		=> array(
+		'[http://runescape.wikia.com/wiki/User_talk:TehKittyCat TehKittyCat]',
+		'[http://runescape.wikia.com/wiki/User:Cqm Cqm]'
 );
 
 $wgAutoloadClasses['RSHiscores'] = __DIR__ . '/RSHighscores.body.php';
