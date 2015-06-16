@@ -114,7 +114,7 @@ class RSHiscores {
 	 * @param int $type Index representing the requested type of data for the given skill.
 	 * @return string
 	 */
-	private static function getHiscores( $hs = 'rs3', $player = '', $skill = -1, $type = 1 ) {
+	private static function getHiscores( $hs, $player, $skill, $type ) {
 		global $wgRSLimit;
 
 		if ( $hs != 'rs3' && $hs != 'osrs' ) {
