@@ -8,6 +8,19 @@
 
 $messages = array();
 
+$messages['qqq'] = array(
+	'rshiscores-desc'		=> '{{desc}}',
+	'rshiscores-error-category'	=> 'Category for tagging errors returned by the parser function.',
+	'rshiscores-error-A'		=> 'Error message for missing player name.',
+	'rshiscores-error-B'		=> 'Error message for a player that was not found in the RuneScape Hiscores',
+	'rshiscores-error-C'		=> 'Error message for when a curl error occurs, whre $1 is the number of the curl error.',
+	'rshiscores-error-D'		=> 'Error message for when a HTTP error occurs, where $1 is the HTTP status.',
+	'rshiscores-error-E'		=> 'Error message for when $wgRSLimit is exceeded.',
+	'rshiscores-error-F'		=> 'Error message for when the skill requested does not exist.',
+	'rshiscores-error-G'		=> 'Error message for when the type requested does not exist.',
+	'rshiscores-error-H'		=> 'Error message for when the API requested does not exist.'
+);
+
 /**
  * English (English)
  */
