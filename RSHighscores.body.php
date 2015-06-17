@@ -174,7 +174,7 @@ class RSHiscores {
 
 		if ( ctype_alpha( $first ) ) {
 			$parser->addTrackingCategory( 'rshiscores-error-category' );
-			$msg = wfMessage( 'rshiscores-error-' . $first )
+			$msg = wfMessage( 'rshiscores-error-' . $first );
 
 			// Pass any error codes to the returned message as parameters.
 			if ( strlen( $ret ) > 1 ) {
