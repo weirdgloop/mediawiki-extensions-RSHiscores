@@ -84,10 +84,21 @@ class RSHiscores {
 
 		// Couldn't find in the object cache, so retrieve from the site.
 		if ( $data === false ) {
-			$data = self::retrieveHiscores( $hs, $player );
+			// If not blocked from too many requests or technical issues, then lookup.
+			if ( $objCache->get( 'rshiscores-blocked') === false ) {
+				$data = self::retrieveHiscores( $hs, $player );
 
-			// Cache the new results.
-			$objCache->set( 'rshiscores-' . $player . '-' . $hs, $data, 60 );
+				// Request failed, so no requests for 15 min.
+				if ( $data == 'C28' ) {
+					$objCache->set( 'rshiscores-blocked', true, 60 * 15 );
+				}
+
+				// Cache the new results.
+				$objCache->set( 'rshiscores-' . $player . '-' . $hs, $data, 60 );
+			} else {
+				// This or a previous request failed, so hold off further requests for now.
+				$data = 'I';
+			}
 		}
 
 		return $data;
