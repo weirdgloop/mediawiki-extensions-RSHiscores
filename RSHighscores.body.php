@@ -184,6 +184,12 @@ class RSHiscores {
 			// Add the hiscores data to the cache.
 			self::$cache[$hs][$player] = $data;
 
+			// If blocked, then cache for only 15 minutes.
+			if ( $data == 'I' ) {
+				$output = $parser->getOutput();
+				if ( $output->isCacheable() && $output->getCacheExpiry() > 60 * 15 )
+					$output->updateCacheExpiry( 60 * 15 );
+			}
 		} else {
 			// The name limit set by $wgRSLimit was reached.
 			return 'E';
