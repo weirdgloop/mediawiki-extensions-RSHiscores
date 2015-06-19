@@ -178,7 +178,7 @@ class RSHiscores {
 
 			// Pass any error codes to the returned message as parameters.
 			if ( strlen( $ret ) > 1 ) {
-				$msg = $msg->params( substr( $data, 1 ) )->parse();
+				$msg = $msg->params( substr( $ret, 1 ) )->parse();
 			} else {
 				$msg = $msg->parse();
 			}

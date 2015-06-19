@@ -22,7 +22,7 @@ $wgExtensionCredits['parserhook'][] = array(
 	'name'			=> 'RSHiscores',
 	'version'		=> '3.1.0-dev',
 	'descriptionmsg'	=> 'rshiscores-desc',
-	'url'			=> 'https://github.com/TehKittyCat/RSHiscores',
+	'url'			=> 'https://github.com/rswiki/RSHiscores',
 	'author'		=> array(
 		'[http://runescape.wikia.com/wiki/User_talk:TehKittyCat TehKittyCat]',
 		'[http://runescape.wikia.com/wiki/User:Quarenon Quarenon]',
