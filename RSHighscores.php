@@ -33,6 +33,8 @@ $wgExtensionMessagesFiles['RSHiscoresMagic'] = __DIR__ . '/RSHighscores.i18n.mag
 
 $wgHooks['ParserFirstCallInit'][] = 'RSHiscores::register';
 
+$wgTrackingCategories[] = 'rshiscores-error-category';
+
 /**
  * Defines the maximum number of names allowed per page to retrieve hiscores
  * data for. This is not a call limit. This is to prevent abuse, especially
