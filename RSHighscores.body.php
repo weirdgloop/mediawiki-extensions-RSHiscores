@@ -69,6 +69,31 @@ class RSHiscores {
 	}
 
 	/**
+	 * Lookup hiscores data from object cache before retrieving from the site.
+	 *
+	 * @param string $hs Which hiscores API to retrieve from.
+	 * @param string $player Player's display name.
+	 * @return string Raw hiscores data
+	 */
+	private static function lookupHiscores( $hs, $player ) {
+		// Instance of the object cache to retrieve the hiscores data from.
+		$objCache = wfGetCache( CACHE_ANYTHING );
+
+		// Try to retrieve the hiscores data from the object cache.
+		$data = $objCache->get( 'rshiscores-' . $player . '-' . $hs );
+
+		// Couldn't find in the object cache, so retrieve from the site.
+		if ( $data === false ) {
+			$data = self::retrieveHiscores( $hs, $player );
+
+			// Cache the new results.
+			$objCache->set( 'rshiscores-' . $player . '-' . $hs, $data, 60 );
+		}
+
+		return $data;
+	}
+
+	/**
 	 * Parse the hiscores data.
 	 *
 	 * @param string $data
@@ -138,8 +163,9 @@ class RSHiscores {
 			// Update the name limit counter.
 			self::$times++;
 
-			// Get the hiscores data from the site.
-			$data = self::retrieveHiscores( $hs, $player );
+			// Lookup the hiscores data from the object cache,
+			// if not found, then retrieve the data from the site.
+			$data = self::lookupHiscores( $hs, $player );
 
 			// escape the result as it's from an external API
 			$data = htmlspecialchars( $data, ENT_QUOTES );
