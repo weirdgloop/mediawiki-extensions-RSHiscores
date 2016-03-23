@@ -2,7 +2,7 @@
 
 A MediaWiki extension that provides easy access to [RuneScape's Hiscores](http://services.runescape.com/m=hiscore/overview) for use in wikitext and JS calculators. Originally designed for the [RuneScape Wiki](http://runescape.wikia.com).
 
-Issues and pull requests should filed [here](https://github.com/TehKittyCat/RSHiscores). However, the version used by [Wikia](http://www.wikia.com) (and the RuneScape Wiki) might be behind this version. For the version used by Wikia see [here](https://github.com/Wikia/app/tree/dev/extensions/3rdparty/RSHighscores). Alternatively, see the ['wikia' branch](https://github.com/TehKittyCat/RSHiscores/tree/wikia) for the currently submitted version.
+Issues and pull requests should filed [here](https://github.com/TehKittyCat/RSHiscores). However, the version used by [Wikia](http://www.wikia.com) (and the RuneScape Wiki) might be behind this version. For the version used by Wikia see [here](https://github.com/Wikia/app/tree/dev/extensions/3rdparty/RSHighscores). Alternatively, see [Special:Version](http://runescape.wikia.com/wiki/Special:Version) on RuneScape Wiki.
 
 # Installation
 
@@ -68,28 +68,29 @@ If an error occurs, then an error code will be returned. See [Errors](#errors) f
 | 24     | Summoning                          |
 | 25     | Dungeoneering                      |
 | 26     | Divination                         |
-| 27     | Bounty Hunter                      |
-| 28     | Bounty Hunter Rogue                |
-| 29     | Dominion Tower                     |
-| 30     | The Crucible                       |
-| 31     | Castle Wars Games                  |
-| 32     | B.A. Attackers                     |
-| 33     | B.A. Defenders                     |
-| 34     | B.A. Collectors                    |
-| 35     | B.A. Healers                       |
-| 36     | Duel Tournament                    |
-| 37     | Mobilising Armies                  |
-| 38     | Conquest                           |
-| 39     | Fist of Guthix                     |
-| 40     | GG: Resource Race                  |
-| 41     | GG: Athletics                      |
-| 42     | WE2: Armadyl Lifetime Contribution |
-| 43     | WE2: Bandos Lifetime Contribution  |
-| 44     | WE2: Armadyl PvP Kills             |
-| 45     | WE2: Bandos PvP Kills              |
-| 46     | Heist Guard Level                  |
-| 47     | Heist Robber Level                 |
-| 48     | CFP: 5 Game Average                |
+| 27     | Invention                          |
+| 28     | Bounty Hunter                      |
+| 29     | Bounty Hunter Rogue                |
+| 30     | Dominion Tower                     |
+| 31     | The Crucible                       |
+| 32     | Castle Wars Games                  |
+| 33     | B.A. Attackers                     |
+| 34     | B.A. Defenders                     |
+| 35     | B.A. Collectors                    |
+| 36     | B.A. Healers                       |
+| 37     | Duel Tournament                    |
+| 38     | Mobilising Armies                  |
+| 39     | Conquest                           |
+| 40     | Fist of Guthix                     |
+| 41     | GG: Resource Race                  |
+| 42     | GG: Athletics                      |
+| 43     | WE2: Armadyl Lifetime Contribution |
+| 44     | WE2: Bandos Lifetime Contribution  |
+| 45     | WE2: Armadyl PvP Kills             |
+| 46     | WE2: Bandos PvP Kills              |
+| 47     | Heist Guard Level                  |
+| 48     | Heist Robber Level                 |
+| 49     | CFP: 5 Game Average                |
 
 ## Types
 | Number | Type                  |
