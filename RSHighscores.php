@@ -20,7 +20,7 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 $wgExtensionCredits['parserhook'][] = array(
 	'path'			=> __FILE__,
 	'name'			=> 'RSHiscores',
-	'version'		=> '3.1.0-dev',
+	'version'		=> '3.1.0',
 	'descriptionmsg'	=> 'rshiscores-desc',
 	'url'			=> 'https://github.com/rswiki/RSHiscores',
 	'author'		=> array(
