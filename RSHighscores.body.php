@@ -5,13 +5,13 @@
 
 class RSHiscores {
 	public static $ch = NULL;
-	public static $cache = array();
+	public static $cache = [];
 	public static $times = 0;
 
 	/**
 	 * Setup parser function
 	 *
-	 * @param $parser Parser
+	 * @param Parser $parser
 	 * @return bool
 	 */
 	public static function register( &$parser ) {
@@ -52,7 +52,9 @@ class RSHiscores {
 
 			if ( $status == 200 ) {
 				return $data;
-			} elseif ( $status == 404 ) {
+			}
+
+			if ( $status == 404 ) {
 				// The player could not be found.
 				return 'B';
 			}
@@ -80,25 +82,26 @@ class RSHiscores {
 	 * @return string Raw hiscores data
 	 */
 	private static function lookupHiscores( $hs, $player ) {
-		// Instance of the object cache to retrieve the hiscores data from.
-		$objCache = wfGetCache( CACHE_ANYTHING );
+		global $wgMemc;
 
 		// Try to retrieve the hiscores data from the object cache.
-		$data = $objCache->get( 'rshiscores-' . $player . '-' . $hs );
+		$data = $wgMemc->get( 'rshiscores-' . $player . '-' . $hs );
 
 		// Couldn't find in the object cache, so retrieve from the site.
 		if ( $data === false ) {
 			// If not blocked from too many requests or technical issues, then lookup.
-			if ( $objCache->get( 'rshiscores-blocked') === false ) {
+			if ( $wgMemc->get( 'rshiscores-blocked') === false ) {
 				$data = self::retrieveHiscores( $hs, $player );
 
 				// Request failed, so no requests for 15 min.
 				if ( $data == 'C28' ) {
-					$objCache->set( 'rshiscores-blocked', true, 60 * 15 );
+					$blockedKey = wfMemcKey( 'rshiscores-blocked' );
+					$wgMemc->set( $blockedKey, true, 60 * 15 );
 				}
 
 				// Cache the new results.
-				$objCache->set( 'rshiscores-' . $player . '-' . $hs, $data, 60 );
+				$resKey = wfMemcKey( 'rshiscores', $player, $hs );
+				$wgMemc->set( $resKey, $data, 60 );
 			} else {
 				// This or a previous request failed, so hold off further requests for now.
 				$data = 'I';
@@ -146,7 +149,8 @@ class RSHiscores {
 	 *
 	 * @param string $hs Which hiscores API to use.
 	 * @param string $player Player's display name. Can not be empty.
-	 * @param int $skill Index representing the requested skill. Leave as -1 for requesting the raw data.
+	 * @param int $skill Index representing the requested skill. Leave as -1 for requesting the
+	 *                   raw data.
 	 * @param int $type Index representing the requested type of data for the given skill.
 	 * @return string
 	 */
@@ -164,7 +168,9 @@ class RSHiscores {
 			// No name was entered.
 			return 'A';
 
-		} elseif ( array_key_exists( $hs, self::$cache ) && array_key_exists( $player, self::$cache[$hs] ) ) {
+		}
+
+		if ( array_key_exists( $hs, self::$cache ) && array_key_exists( $player, self::$cache[$hs] ) ) {
 			// Get the hiscores data from the cache.
 			$data = self::$cache[$hs][$player];
 
@@ -185,9 +191,12 @@ class RSHiscores {
 			// If blocked, then cache for only 15 minutes.
 			if ( $data == 'I' ) {
 				$output = $parser->getOutput();
-				if ( $output->isCacheable() && $output->getCacheExpiry() > 60 * 15 )
+
+				if ( $output->isCacheable() && $output->getCacheExpiry() > 60 * 15 ) {
 					$output->updateCacheExpiry( 60 * 15 );
+				}
 			}
+
 		} else {
 			// The name limit set by $wgRSLimit was reached.
 			return 'E';
@@ -197,18 +206,19 @@ class RSHiscores {
 		// or if requested, parse the hiscores data.
 		if ( $skill < 0 ) {
 			return $data;
-		} else {
-			return self::parseHiscores( $data, $skill, $type );
 		}
+
+		return self::parseHiscores( $data, $skill, $type );
 	}
 
 	/**
 	 * Gets requested hiscore data and handles any returned error codes.
 	 *
-	 * @param $parser Parser
+	 * @param Parser $parser
 	 * @param string $hs Which hiscores API to use.
 	 * @param string $player Player's display name. Can not be empty.
-	 * @param int $skill Index representing the requested skill. Leave as -1 for requesting the raw data.
+	 * @param int $skill Index representing the requested skill. Leave as -1 for requesting the
+	 *                   raw data.
 	 * @param int $type Index representing the requested type of data for the given skill.
 	 * @return string
 	 */
