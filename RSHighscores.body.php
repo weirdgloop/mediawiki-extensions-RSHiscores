@@ -1,4 +1,8 @@
 <?php
+/**
+ * <doc>
+ */
+
 class RSHiscores {
 	public static $ch = NULL;
 	public static $cache = array();
@@ -54,14 +58,14 @@ class RSHiscores {
 			}
 
 			// An unexpected HTTP status code was returned, so report it.
-			return 'D'.$status;
+			return 'D' . $status;
 		}
 
 		// An unexpected curl error occurred, so report it.
-		$errno = curl_errno ( self::$ch );
+		$errno = curl_errno( self::$ch );
 
 		if( $errno ) {
-			return 'C'.$errno;
+			return 'C' . $errno;
 		}
 
 		// Should be impossible, but odd things happen, so handle it.
@@ -113,12 +117,10 @@ class RSHiscores {
 	 * @return string Requested portion of the hiscores data.
 	 */
 	private static function parseHiscores( $data, $skill, $type ) {
-		/*
-		 * Check to see if an error has already occurred.
-		 * If so, return the error now, otherwise the wrong error will be
-		 * returned. Some errors have int statuses, so only check first char.
-		 */
-		if ( ctype_alpha ( $data{0} ) ) {
+		// Check to see if an error has already occurred.
+		// If so, return the error now, otherwise the wrong error will be
+		// returned. Some errors have int statuses, so only check first char.
+		if ( ctype_alpha( $data{0} ) ) {
 			return $data;
 		}
 
@@ -140,22 +142,18 @@ class RSHiscores {
 	}
 
 	/**
-	 * <doc>
+	 * Attempt to lookup hiscore data in the cache, or looks it up in the API if not found.
 	 *
-	 * @param $parser Parser
 	 * @param string $hs Which hiscores API to use.
 	 * @param string $player Player's display name. Can not be empty.
 	 * @param int $skill Index representing the requested skill. Leave as -1 for requesting the raw data.
 	 * @param int $type Index representing the requested type of data for the given skill.
 	 * @return string
 	 */
-	public static function renderHiscores( &$parser, $hs = 'rs3', $player = '', $skill = -1, $type = 1 ) {
+	private static function getHiscores( $hs, $player, $skill, $type ) {
 		global $wgRSLimit;
 
 		if ( $hs != 'rs3' && $hs != 'osrs' ) {
-			// RSHiscores 3.0 breaks backward-compatibility. Add a tracking category to allow fixing existing usage.
-			$parser->addTrackingCategory( 'rshiscores-error-category' );
-
 			// Unknown or unsupported hiscores API.
 			return 'H';
 		}
@@ -178,7 +176,7 @@ class RSHiscores {
 			// if not found, then retrieve the data from the site.
 			$data = self::lookupHiscores( $hs, $player );
 
-			// escape the result as it's from an external API
+			// Escape the result as it's from an external API.
 			$data = htmlspecialchars( $data, ENT_QUOTES );
 
 			// Add the hiscores data to the cache.
@@ -195,14 +193,44 @@ class RSHiscores {
 			return 'E';
 		}
 
-		/*
-		 * Finally, return the raw string for use in JS calcs,
-		 * or if requested, parse the hiscores data.
-		 */
+		// Finally, return the raw string for use in JS calcs,
+		// or if requested, parse the hiscores data.
 		if ( $skill < 0 ) {
 			return $data;
 		} else {
 			return self::parseHiscores( $data, $skill, $type );
 		}
+	}
+
+	/**
+	 * Gets requested hiscore data and handles any returned error codes.
+	 *
+	 * @param $parser Parser
+	 * @param string $hs Which hiscores API to use.
+	 * @param string $player Player's display name. Can not be empty.
+	 * @param int $skill Index representing the requested skill. Leave as -1 for requesting the raw data.
+	 * @param int $type Index representing the requested type of data for the given skill.
+	 * @return string
+	 */
+	public static function renderHiscores( &$parser, $hs = 'rs3', $player = '', $skill = -1, $type = 1 ) {
+		$ret = self::getHiscores( $hs, $player, $skill, $type );
+		$first = $ret{0};
+
+		if ( ctype_alpha( $first ) ) {
+			$parser->addTrackingCategory( 'rshiscores-error-category' );
+			$msg = wfMessage( 'rshiscores-error-' . $first );
+
+			// Pass any error codes to the returned message as parameters.
+			if ( strlen( $ret ) > 1 ) {
+				$msg = $msg->params( substr( $ret, 1 ) )->parse();
+			} else {
+				$msg = $msg->parse();
+			}
+
+			// Return an error format compatible with #iferror.
+			return '<span class="error">' . $msg . '</span>';
+		}
+
+		return $ret;
 	}
 }
