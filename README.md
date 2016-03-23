@@ -101,13 +101,15 @@ If an error occurs, then an error code will be returned. See [Errors](#errors) f
 ## Errors
 If there is an error in the usage or request, one of the following codes will be returned instead.
 
-| Code | Error                                                                                                                                  |
-| ---- | -------------------------------------------------------------------------------------------------------------------------------------- |
-| A    | No name was entered.                                                                                                                   |
-| B    | The player could not be found.                                                                                                         |
+| Code | Error                |
+| ---- | -------------------- |
+| A    | No name was entered. |
+| B    | The player could not be found. |
 | C<#> | A curl error occurred, if it's form of C<#>, check the number [here](http://curl.haxx.se/libcurl/c/libcurl-errors.html) for the cause. |
 | D<#> | An unexpected HTTP status was returned, check the number [here](http://en.wikipedia.org/wiki/List_of_HTTP_status_codes) for the cause. |
-| E    | The name call limit was reached. This is by default 2 player names. This is not a limit on the number of function calls.               |
-| F    | The skill does not exist.                                                                                                              |
-| G    | The type does not exist.                                                                                                               |
-| H    | The API is unknown or unsupported.                                                                                                     |
+| E    | The name call limit was reached. This is by default 2 player names. This is not a limit on the number of function calls. |
+| F    | The skill does not exist. |
+| G    | The type does not exist. |
+| H    | The API is unknown or unsupported. |
+       | The type does not exist. |
+| I    | A timeout error occurred, normally caused by too many requests being submitted in too short a time. This causes all requests to be prevented for a cooldown period of 15 minutes, at which point requests can be resumed. |
