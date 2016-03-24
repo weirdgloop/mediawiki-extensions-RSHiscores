@@ -4,7 +4,7 @@
  */
 
 class RSHiscores {
-	public static $ch = NULL;
+	public static $ch = null;
 	public static $cache = [];
 	public static $times = 0;
 
@@ -27,51 +27,58 @@ class RSHiscores {
 	 * @return string Raw hiscores data
 	 */
 	private static function retrieveHiscores( $hs, $player ) {
-		global $wgHTTPTimeout;
+		global $wgRSTimeout;
 
-		if ( $hs == 'rs3' ) {
+		if ( $hs === 'rs3' ) {
 			$url = 'http://services.runescape.com/m=hiscore/index_lite.ws?player=';
-		} elseif ( $hs == 'osrs' ) {
+		} elseif ( $hs === 'osrs' ) {
 			$url = 'http://services.runescape.com/m=hiscore_oldschool/index_lite.ws?player=';
 		} else {
-			// Unknown or unsupported hiscores API.
+			// unknown or unsupported hiscores API
 			return 'H';
 		}
 
-		// Setup the cURL handler if not previously initialised.
-		if ( self::$ch == NULL ) {
+		// setup the cURL handler if not previously initialised
+		if ( self::$ch === null ) {
 			self::$ch = curl_init();
-			curl_setopt( self::$ch, CURLOPT_TIMEOUT, $wgHTTPTimeout );
-			curl_setopt( self::$ch, CURLOPT_RETURNTRANSFER, TRUE );
+
+			curl_setopt( self::$ch, CURLOPT_TIMEOUT, $wgRSTimeout );
+			curl_setopt( self::$ch, CURLOPT_RETURNTRANSFER, true );
 		}
 
-		curl_setopt( self::$ch, CURLOPT_URL, $url . urlencode( $player ) );
+		$url .= urlencode( $player );
+		curl_setopt( self::$ch, CURLOPT_URL, $url );
 
-		if ( $data = curl_exec( self::$ch ) ) {
+		$data = curl_exec( self::$ch );
+
+		if ( $data ) {
 			$status = curl_getinfo( self::$ch, CURLINFO_HTTP_CODE );
 
-			if ( $status == 200 ) {
+			if ( $status === 200 ) {
 				return $data;
 			}
 
-			if ( $status == 404 ) {
-				// The player could not be found.
+			if ( $status === 404 ) {
+				// the player could not be found
 				return 'B';
 			}
 
-			// An unexpected HTTP status code was returned, so report it.
+			// unexpected HTTP status code
 			return 'D' . $status;
 		}
 
-		// An unexpected curl error occurred, so report it.
+		// unexpected curl error occurred
+		$ret = 'C';
 		$errno = curl_errno( self::$ch );
 
-		if( $errno ) {
-			return 'C' . $errno;
+		// should be impossible for this to fail
+		// but just in case
+		if ( $errno ) {
+			$ret .= $errno;
 		}
 
-		// Should be impossible, but odd things happen, so handle it.
-		return 'C';
+
+		return $ret;
 	}
 
 	/**
@@ -84,26 +91,28 @@ class RSHiscores {
 	private static function lookupHiscores( $hs, $player ) {
 		global $wgMemc;
 
-		// Try to retrieve the hiscores data from the object cache.
-		$data = $wgMemc->get( 'rshiscores-' . $player . '-' . $hs );
+		$key = wfMemcKey( 'rshiscores', $player, $hs );
+		$blockedKey = wfMemcKey( 'rshiscores-blocked' );
 
-		// Couldn't find in the object cache, so retrieve from the site.
+		$data = $wgMemc->get( $resKey );
+
+		// couldn't find in the cache, so get it from the API
 		if ( $data === false ) {
-			// If not blocked from too many requests or technical issues, then lookup.
-			if ( $wgMemc->get( 'rshiscores-blocked') === false ) {
+			// check to see if we've had a blocked request recently before trying
+			if ( $wgMemc->get( $blockedKey ) === false ) {
 				$data = self::retrieveHiscores( $hs, $player );
 
-				// Request failed, so no requests for 15 min.
-				if ( $data == 'C28' ) {
-					$blockedKey = wfMemcKey( 'rshiscores-blocked' );
+				// request failed, so no requests for 15 min
+				if ( $data === 'C28' ) {
 					$wgMemc->set( $blockedKey, true, 60 * 15 );
+
+					// convert to a more descriptive message
+					$data = 'I';
 				}
 
-				// Cache the new results.
-				$resKey = wfMemcKey( 'rshiscores', $player, $hs );
-				$wgMemc->set( $resKey, $data, 60 );
+				$wgMemc->set( $key, $data, 60 );
 			} else {
-				// This or a previous request failed, so hold off further requests for now.
+				// previous request failed
 				$data = 'I';
 			}
 		}
@@ -120,24 +129,23 @@ class RSHiscores {
 	 * @return string Requested portion of the hiscores data.
 	 */
 	private static function parseHiscores( $data, $skill, $type ) {
-		// Check to see if an error has already occurred.
-		// If so, return the error now, otherwise the wrong error will be
-		// returned. Some errors have int statuses, so only check first char.
+		// check to see if an error has already occurred and return it if so
+		// some errors have int statuses, so only check first char
 		if ( ctype_alpha( $data{0} ) ) {
 			return $data;
 		}
 
-		$data = explode( "\n", $data, $skill + 2 );
+		$data = explode( '\n', $data, $skill + 2 );
 
 		if ( !array_key_exists( $skill, $data ) ) {
-			// The skill does not exist.
+			// skill does not exist.
 			return 'F';
 		}
 
 		$data = explode( ',', $data[$skill], $type + 2 );
 
 		if ( !array_key_exists( $type, $data ) ) {
-			// The type does not exist.
+			// type does not exist.
 			return 'G';
 		}
 
@@ -150,21 +158,21 @@ class RSHiscores {
 	 * @param string $hs Which hiscores API to use.
 	 * @param string $player Player's display name. Can not be empty.
 	 * @param int $skill Index representing the requested skill. Leave as -1 for requesting the
-	 *                   raw data.
+	 *     raw data.
 	 * @param int $type Index representing the requested type of data for the given skill.
 	 * @return string
 	 */
 	private static function getHiscores( $hs, $player, $skill, $type ) {
 		global $wgRSLimit;
 
-		if ( $hs != 'rs3' && $hs != 'osrs' ) {
+		if ( $hs !== 'rs3' && $hs !== 'osrs' ) {
 			// Unknown or unsupported hiscores API.
 			return 'H';
 		}
 
 		$player = trim( $player );
 
-		if( $player == '' ) {
+		if( $player === '' ) {
 			// No name was entered.
 			return 'A';
 
@@ -174,7 +182,7 @@ class RSHiscores {
 			// Get the hiscores data from the cache.
 			$data = self::$cache[$hs][$player];
 
-		} elseif ( self::$times < $wgRSLimit || $wgRSLimit == 0 ) {
+		} elseif ( self::$times < $wgRSLimit || $wgRSLimit === 0 ) {
 			// Update the name limit counter.
 			self::$times++;
 
@@ -189,7 +197,7 @@ class RSHiscores {
 			self::$cache[$hs][$player] = $data;
 
 			// If blocked, then cache for only 15 minutes.
-			if ( $data == 'I' ) {
+			if ( $data === 'I' ) {
 				$output = $parser->getOutput();
 
 				if ( $output->isCacheable() && $output->getCacheExpiry() > 60 * 15 ) {
@@ -218,7 +226,7 @@ class RSHiscores {
 	 * @param string $hs Which hiscores API to use.
 	 * @param string $player Player's display name. Can not be empty.
 	 * @param int $skill Index representing the requested skill. Leave as -1 for requesting the
-	 *                   raw data.
+	 *     raw data.
 	 * @param int $type Index representing the requested type of data for the given skill.
 	 * @return string
 	 */
@@ -230,14 +238,14 @@ class RSHiscores {
 			$parser->addTrackingCategory( 'rshiscores-error-category' );
 			$msg = wfMessage( 'rshiscores-error-' . $first );
 
-			// Pass any error codes to the returned message as parameters.
+			// pass any error codes to the returned message as parameters
 			if ( strlen( $ret ) > 1 ) {
-				$msg = $msg->params( substr( $ret, 1 ) )->parse();
-			} else {
-				$msg = $msg->parse();
+				$msg = $msg->params( substr( $ret, 1 ) )
 			}
 
-			// Return an error format compatible with #iferror.
+			$msg = $msg->parse();
+
+			// return an error format compatible with #iferror
 			return '<span class="error">' . $msg . '</span>';
 		}
 

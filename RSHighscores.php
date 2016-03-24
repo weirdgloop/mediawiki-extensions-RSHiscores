@@ -17,18 +17,18 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 	die();
 }
 
-$wgExtensionCredits['parserhook'][] = array(
+$wgExtensionCredits['parserhook'][] = [
 	'path'			=> __FILE__,
 	'name'			=> 'RSHiscores',
 	'version'		=> '3.1.0',
 	'descriptionmsg'	=> 'rshiscores-desc',
 	'url'			=> 'https://github.com/rswiki/RSHiscores',
-	'author'		=> array(
+	'author'		=> [
 		'[http://runescape.wikia.com/wiki/User_talk:TehKittyCat TehKittyCat]',
 		'[http://runescape.wikia.com/wiki/User:Quarenon Quarenon]',
 		'[http://runescape.wikia.com/wiki/User:Cqm Cqm]',
-	),
-);
+	],
+];
 
 $wgAutoloadClasses['RSHiscores'] = __DIR__ . '/RSHighscores.body.php';
 
@@ -46,3 +46,8 @@ $wgTrackingCategories[] = 'rshiscores-error-category';
  * comparisons. Set to 0 to disable this limit. On Wikia the limit is set to 2.
  */
 $wgRSLimit = 2;
+
+/**
+ * Defines the amount of time in seonds allowed for each lookup before timing out.
+ */
+$wgRSTimeout = 5;
