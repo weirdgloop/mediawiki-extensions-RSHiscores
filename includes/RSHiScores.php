@@ -1,32 +1,25 @@
 <?php
 /**
- * <doc>
+ * RSHiscores, a MediaWiki extension for providing access to RuneScape's HiScores data on the RuneScape Wiki.
+ * Copyright (C) 2010-2018 TehKittyCat
+ *
+ * SPDX-License-Identifier: GPL-3.0+
+ *
+ * Main code for the RSHiScores extension.
  */
-
-class RSHiscores {
+class RSHiScores {
 	public static $ch = NULL;
 	public static $cache = array();
 	public static $times = 0;
 
 	/**
-	 * Setup parser function
+	 * Retrieve the raw HiScores data from RuneScape.
 	 *
-	 * @param $parser Parser
-	 * @return bool
-	 */
-	public static function register( &$parser ) {
-		$parser->setFunctionHook( 'hs', 'RSHiscores::renderHiscores' );
-		return true;
-	}
-
-	/**
-	 * Retrieve the raw hiscores data from RuneScape.
-	 *
-	 * @param string $hs Which hiscores API to retrieve from.
+	 * @param string $hs Which HiScores API to retrieve from.
 	 * @param string $player Player's display name.
-	 * @return string Raw hiscores data
+	 * @return string Raw HiScores data
 	 */
-	private static function retrieveHiscores( $hs, $player ) {
+	private static function retrieveHiScores( $hs, $player ) {
 		global $wgHTTPTimeout;
 
 		if ( $hs == 'rs3' ) {
@@ -34,7 +27,7 @@ class RSHiscores {
 		} elseif ( $hs == 'osrs' ) {
 			$url = 'http://services.runescape.com/m=hiscore_oldschool/index_lite.ws?player=';
 		} else {
-			// Unknown or unsupported hiscores API.
+			// Unknown or unsupported HiScores API.
 			return 'H';
 		}
 
@@ -73,14 +66,14 @@ class RSHiscores {
 	}
 
 	/**
-	 * Parse the hiscores data.
+	 * Parse the HiScores data.
 	 *
 	 * @param string $data
 	 * @param int $skill Index representing the requested skill.
 	 * @param int $type Index representing the requested type of data for the given skill.
-	 * @return string Requested portion of the hiscores data.
+	 * @return string Requested portion of the HiScores data.
 	 */
-	private static function parseHiscores( $data, $skill, $type ) {
+	private static function parseHiScores( $data, $skill, $type ) {
 		// Check to see if an error has already occurred.
 		// If so, return the error now, otherwise the wrong error will be
 		// returned. Some errors have int statuses, so only check first char.
@@ -108,17 +101,17 @@ class RSHiscores {
 	/**
 	 * Attempt to lookup hiscore data in the cache, or looks it up in the API if not found.
 	 *
-	 * @param string $hs Which hiscores API to use.
+	 * @param string $hs Which HiScores API to use.
 	 * @param string $player Player's display name. Can not be empty.
 	 * @param int $skill Index representing the requested skill. Leave as -1 for requesting the raw data.
 	 * @param int $type Index representing the requested type of data for the given skill.
 	 * @return string
 	 */
-	private static function getHiscores( $hs, $player, $skill, $type ) {
+	private static function getHiScores( $hs, $player, $skill, $type ) {
 		global $wgRSLimit;
 
 		if ( $hs != 'rs3' && $hs != 'osrs' ) {
-			// Unknown or unsupported hiscores API.
+			// Unknown or unsupported HiScores API.
 			return 'H';
 		}
 
@@ -129,20 +122,20 @@ class RSHiscores {
 			return 'A';
 
 		} elseif ( array_key_exists( $hs, self::$cache ) && array_key_exists( $player, self::$cache[$hs] ) ) {
-			// Get the hiscores data from the cache.
+			// Get the HiScores data from the cache.
 			$data = self::$cache[$hs][$player];
 
 		} elseif ( self::$times < $wgRSLimit || $wgRSLimit == 0 ) {
 			// Update the name limit counter.
 			self::$times++;
 
-			// Get the hiscores data from the site.
-			$data = self::retrieveHiscores( $hs, $player );
+			// Get the HiScores data from the site.
+			$data = self::retrieveHiScores( $hs, $player );
 
 			// Escape the result as it's from an external API.
 			$data = htmlspecialchars( $data, ENT_QUOTES );
 
-			// Add the hiscores data to the cache.
+			// Add the HiScores data to the cache.
 			self::$cache[$hs][$player] = $data;
 		} else {
 			// The name limit set by $wgRSLimit was reached.
@@ -150,26 +143,26 @@ class RSHiscores {
 		}
 
 		// Finally, return the raw string for use in JS calcs,
-		// or if requested, parse the hiscores data.
+		// or if requested, parse the HiScores data.
 		if ( $skill < 0 ) {
 			return $data;
 		} else {
-			return self::parseHiscores( $data, $skill, $type );
+			return self::parseHiScores( $data, $skill, $type );
 		}
 	}
 
 	/**
 	 * Gets requested hiscore data and handles any returned error codes.
 	 *
-	 * @param $parser Parser
-	 * @param string $hs Which hiscores API to use.
+	 * @param Parser &$parser
+	 * @param string $hs Which HiScores API to use.
 	 * @param string $player Player's display name. Can not be empty.
 	 * @param int $skill Index representing the requested skill. Leave as -1 for requesting the raw data.
 	 * @param int $type Index representing the requested type of data for the given skill.
 	 * @return string
 	 */
-	public static function renderHiscores( &$parser, $hs = 'rs3', $player = '', $skill = -1, $type = 1 ) {
-		$ret = self::getHiscores( $hs, $player, $skill, $type );
+	public static function renderHiScores( Parser &$parser, $hs = 'rs3', $player = '', $skill = -1, $type = 1 ) {
+		$ret = self::getHiScores( $hs, $player, $skill, $type );
 		$first = $ret{0};
 
 		if ( ctype_alpha( $first ) ) {

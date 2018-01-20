@@ -1,0 +1,40 @@
+{
+	"name": "RSHiScores",
+	"version": "3.1.0",
+	"author": [
+		"[https://runescape.wiki/w/User_talk:TehKittyCat TehKittyCat]",
+		"[https://runescape.wiki/w/User:Quarenon Quarenon]",
+		"[https://runescape.wiki/w/User:Cqm Cqm]"
+	],
+	"url": "https://gitlab.com/weirdgloop/rshiscores",
+	"descriptionmsg": "rshiscores-desc",
+	"license-name": "GPL-3.0+",
+	"type": "parserhook",
+	"requires": {
+		"MediaWiki": ">=1.29.0"
+	},
+	"MessagesDirs": {
+		"RSHiScores": [
+			"i18n"
+		]
+	},
+	"ExtensionMessagesFiles": {
+		"RSHiScoresMagic": "includes/RSHiScoresMagic.php"
+	},
+	"AutoloadClasses": {
+		"RSHiScores": "includes/RSHiScores.php",
+		"RSHiScoresHooks": "includes/RSHiScoresHooks.php"
+	},
+	"Hooks": {
+		"ParserFirstCallInit": [
+			"RSHiScoresHooks::onParserFirstCallInit"
+		]
+	},
+	"TrackingCategories": [
+		"rshiscores-error-category"
+	],
+	"config": {
+		"RSHiScoresNameLimit": 2
+	},
+	"manifest_version": 2
+}

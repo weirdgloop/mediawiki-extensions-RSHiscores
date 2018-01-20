@@ -1,6 +1,6 @@
 <?php
 /**
- * Internationalisation file for Extension RSHiscores
+ * Internationalisation file for Extension RSHiScores
  *
  * @file
  * @ingroup Extensions
