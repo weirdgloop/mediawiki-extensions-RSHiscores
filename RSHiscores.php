@@ -24,23 +24,23 @@ $wgExtensionCredits['parserhook'][] = array(
 	'descriptionmsg'	=> 'rshiscores-desc',
 	'url'			=> 'https://github.com/rswiki/RSHiscores',
 	'author'		=> array(
-		'[http://runescape.wikia.com/wiki/User_talk:TehKittyCat TehKittyCat]',
-		'[http://runescape.wikia.com/wiki/User:Quarenon Quarenon]',
-		'[http://runescape.wikia.com/wiki/User:Cqm Cqm]',
+		'[https://runescape.wiki/w/User_talk:TehKittyCat TehKittyCat]',
+		'[https://runescape.wiki/w/User:Quarenon Quarenon]',
+		'[https://runescape.wiki/w/User:Cqm Cqm]',
 	),
 );
 
-$wgAutoloadClasses['RSHiscores'] = __DIR__ . '/RSHighscores.body.php';
+$wgAutoloadClasses['RSHiscores'] = __DIR__ . '/RSHiscores.body.php';
 
-$wgExtensionMessagesFiles['RSHiscores'] = __DIR__ . '/RSHighscores.i18n.php';
-$wgExtensionMessagesFiles['RSHiscoresMagic'] = __DIR__ . '/RSHighscores.i18n.magic.php';
+$wgExtensionMessagesFiles['RSHiscores'] = __DIR__ . '/RSHiscores.i18n.php';
+$wgExtensionMessagesFiles['RSHiscoresMagic'] = __DIR__ . '/RSHiscores.i18n.magic.php';
 
 $wgHooks['ParserFirstCallInit'][] = 'RSHiscores::register';
 
 /**
  * Defines the maximum number of names allowed per page to retrieve hiscores
  * data for. This is not a call limit. This is to prevent abuse, especially
- * since it is Wikia's bandwidth we are using. Defaults to two for side-by-side
- * comparisons. Set to 0 to disable this limit. On Wikia the limit is set to 2.
+ * since it is our bandwidth we are using. Defaults to two for side-by-side
+ * comparisons. Set to 0 to disable this limit. On RuneScape Wiki the limit is set to 2.
  */
 $wgRSLimit = 2;

@@ -1,8 +1,6 @@
 # RSHiscores
 
-A MediaWiki extension that provides easy access to [RuneScape's Hiscores](http://services.runescape.com/m=hiscore/overview) for use in wikitext and JS calculators. Originally designed for the [RuneScape Wiki](http://runescape.wikia.com).
-
-Issues and pull requests should filed [here](https://github.com/TehKittyCat/RSHiscores). However, the version used by [Wikia](http://www.wikia.com) (and the RuneScape Wiki) might be behind this version. For the version used by Wikia see [here](https://github.com/Wikia/app/tree/dev/extensions/3rdparty/RSHighscores). Alternatively, see [Special:Version](http://runescape.wikia.com/wiki/Special:Version) on RuneScape Wiki.
+A MediaWiki extension that provides easy access to [RuneScape's Hiscores](http://services.runescape.com/m=hiscore/overview) for use in wikitext and JS calculators on the [RuneScape Wiki](https://runescape.wiki).
 
 # Installation
 
@@ -10,7 +8,7 @@ Issues and pull requests should filed [here](https://github.com/TehKittyCat/RSHi
 2. Add the following to your `LocalSettings.php`
 ```php
 // RSHiscores
-require_once( 'extensions/RSHiscores/RSHighscores.php' );
+require_once( 'extensions/RSHiscores/RSHiscores.php' );
 
 /**
  * You may set $wgRSLimit in LocalSettings.php to adjust the maximum number of
