@@ -23,6 +23,7 @@
 	},
 	"AutoloadClasses": {
 		"RSHiScores": "includes/RSHiScores.php",
+		"RSHiScoresException": "includes/RSHiScoresException.php",
 		"RSHiScoresHooks": "includes/RSHiScoresHooks.php"
 	},
 	"Hooks": {

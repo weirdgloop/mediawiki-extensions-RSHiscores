@@ -8,7 +8,6 @@
  * Main code for the RSHiScores extension.
  */
 class RSHiScores {
-	public static $ch = NULL;
 	public static $cache = array();
 	public static $times = 0;
 
@@ -17,82 +16,74 @@ class RSHiScores {
 	 *
 	 * @param string $hs Which HiScores API to retrieve from.
 	 * @param string $player Player's display name.
-	 * @return string Raw HiScores data
+	 *
+	 * @return string Raw HiScores data.
+	 *
+	 * @throws RSHiScoresException on error.
 	 */
 	private static function retrieveHiScores( $hs, $player ) {
-		global $wgHTTPTimeout;
+		global $wgCanonicalServer;
 
-		if ( $hs == 'rs3' ) {
-			$url = 'http://services.runescape.com/m=hiscore/index_lite.ws?player=';
-		} elseif ( $hs == 'osrs' ) {
-			$url = 'http://services.runescape.com/m=hiscore_oldschool/index_lite.ws?player=';
+		// Determine the URL for the requested HiScores.
+		switch ( $hs ) {
+			case 'rs3':
+				$url = 'http://services.runescape.com/m=hiscore/index_lite.ws?player=' . urlencode( $player );
+				break;
+			case 'osrs':
+				$url = 'http://services.runescape.com/m=hiscore_oldschool/index_lite.ws?player=' . urlencode( $player );
+				break;
+			default:
+				// Error: Unknown API. Should never be reached, because it is already checked in getHiScores.
+				throw new RSHiScoresException( wfMessage( 'rshiscores-error-unknown-api' ) );
+		}
+
+		// Be a good netizen by including the extension name and wiki server URL in the user agent.
+		$options = array( 'userAgent' => Http::userAgent() . " (RSHiScores: $wgCanonicalServer)" );
+
+		// Retrieve the HiScores.
+		$req = MWHttpRequest::factory( $url, $options );
+		$status = $req->execute();
+
+		// Return the HiScores data or the error that occurred.
+		if ( $status->isOK() ) {
+			// Player data was returned.
+			return $req->getContent();
+		} elseif ( (int)$req->getStatus() == 404 ) {
+			// Error: Player does not exist.
+			throw new RSHiScoresException( wfMessage( 'rshiscores-error-unknown-player', $player ) );
 		} else {
-			// Unknown or unsupported HiScores API.
-			return 'H';
+			// Log request failures.
+			wfDebugLog( 'rshiscores', "Requested '$url'. Returned error '" . explode( ' ', $req->getStatus(), 2 ) . "' instead." );
+
+			// Error: Request failed.
+			throw new RSHiScoresException( wfMessage( 'rshiscores-error-request-failed' ) );
 		}
-
-		// Setup the cURL handler if not previously initialised.
-		if ( self::$ch == NULL ) {
-			self::$ch = curl_init();
-			curl_setopt( self::$ch, CURLOPT_TIMEOUT, $wgHTTPTimeout );
-			curl_setopt( self::$ch, CURLOPT_RETURNTRANSFER, TRUE );
-		}
-
-		curl_setopt( self::$ch, CURLOPT_URL, $url . urlencode( $player ) );
-
-		if ( $data = curl_exec( self::$ch ) ) {
-			$status = curl_getinfo( self::$ch, CURLINFO_HTTP_CODE );
-
-			if ( $status == 200 ) {
-				return $data;
-			} elseif ( $status == 404 ) {
-				// The player could not be found.
-				return 'B';
-			}
-
-			// An unexpected HTTP status code was returned, so report it.
-			return 'D' . $status;
-		}
-
-		// An unexpected curl error occurred, so report it.
-		$errno = curl_errno( self::$ch );
-
-		if( $errno ) {
-			return 'C' . $errno;
-		}
-
-		// Should be impossible, but odd things happen, so handle it.
-		return 'C';
 	}
 
 	/**
 	 * Parse the HiScores data.
 	 *
-	 * @param string $data
+	 * @param string $data Raw HiScores data.
 	 * @param int $skill Index representing the requested skill.
 	 * @param int $type Index representing the requested type of data for the given skill.
-	 * @return string Requested portion of the HiScores data.
+	 *
+	 * @return string Requested potion of the RSHiScores data.
+	 *
+	 * @throws RSHiScoresException on error.
 	 */
 	private static function parseHiScores( $data, $skill, $type ) {
-		// Check to see if an error has already occurred.
-		// If so, return the error now, otherwise the wrong error will be
-		// returned. Some errors have int statuses, so only check first char.
-		if ( ctype_alpha( $data{0} ) ) {
-			return $data;
-		}
-
 		$data = explode( "\n", $data, $skill + 2 );
 
 		if ( !array_key_exists( $skill, $data ) ) {
-			// The skill does not exist.
-			return 'F';
+			// Error: Skill does not exist.
+			throw new RSHiScoresException( wfMessage( 'rshiscores-error-unknown-skill' ) );
 		}
 
 		$data = explode( ',', $data[$skill], $type + 2 );
 
 		if ( !array_key_exists( $type, $data ) ) {
-			// The type does not exist.
-			return 'G';
+			// Error: Type does not exist.
+			throw new RSHiScoresException( wfMessage( 'rshiscores-error-unknown-type' ) );
 		}
 
 		return $data[$type];
@@ -105,27 +96,30 @@ class RSHiScores {
 	 * @param string $player Player's display name. Can not be empty.
 	 * @param int $skill Index representing the requested skill. Leave as -1 for requesting the raw data.
 	 * @param int $type Index representing the requested type of data for the given skill.
+	 *
 	 * @return string
+	 *
+	 * @throws RSHiScoresException on error.
 	 */
 	private static function getHiScores( $hs, $player, $skill, $type ) {
-		global $wgRSLimit;
+		global $wgRSHiScoresNameLimit;
 
 		if ( $hs != 'rs3' && $hs != 'osrs' ) {
-			// Unknown or unsupported HiScores API.
-			return 'H';
+			// Error: Unknown API.
+			throw new RSHiScoresException( wfMessage( 'rshiscores-error-unknown-api' ) );
 		}
 
 		$player = trim( $player );
 
 		if( $player == '' ) {
-			// No name was entered.
-			return 'A';
+			// Error: No player name was entered.
+			throw new RSHiScoresException( wfMessage( 'rshiscores-error-empty-rsn' ) );
 
 		} elseif ( array_key_exists( $hs, self::$cache ) && array_key_exists( $player, self::$cache[$hs] ) ) {
 			// Get the HiScores data from the cache.
 			$data = self::$cache[$hs][$player];
 
-		} elseif ( self::$times < $wgRSLimit || $wgRSLimit == 0 ) {
+		} elseif ( self::$times < $wgRSHiScoresNameLimit || $wgRSHiScoresNameLimit <= 0 ) {
 			// Update the name limit counter.
 			self::$times++;
 
@@ -138,8 +132,8 @@ class RSHiScores {
 			// Add the HiScores data to the cache.
 			self::$cache[$hs][$player] = $data;
 		} else {
-			// The name limit set by $wgRSLimit was reached.
-			return 'E';
+			// Error: The name limit set by $wgRSHiScoresNameLimit was exceeded.
+			throw new RSHiScoresException( wfMessage( 'rshiscores-error-exceeded-limit', $wgRSHiScoresNameLimit ) );
 		}
 
 		// Finally, return the raw string for use in JS calcs,
@@ -159,25 +153,17 @@ class RSHiScores {
 	 * @param string $player Player's display name. Can not be empty.
 	 * @param int $skill Index representing the requested skill. Leave as -1 for requesting the raw data.
 	 * @param int $type Index representing the requested type of data for the given skill.
+	 *
 	 * @return string
 	 */
 	public static function renderHiScores( Parser &$parser, $hs = 'rs3', $player = '', $skill = -1, $type = 1 ) {
-		$ret = self::getHiScores( $hs, $player, $skill, $type );
-		$first = $ret{0};
-
-		if ( ctype_alpha( $first ) ) {
+		try {
+			$ret = self::getHiScores( $hs, $player, $skill, $type );
+		} catch ( RSHiScoresException $e ) {
 			$parser->addTrackingCategory( 'rshiscores-error-category' );
-			$msg = wfMessage( 'rshiscores-error-' . $first );
-
-			// Pass any error codes to the returned message as parameters.
-			if ( strlen( $ret ) > 1 ) {
-				$msg = $msg->params( substr( $ret, 1 ) )->parse();
-			} else {
-				$msg = $msg->parse();
-			}
 
 			// Return an error format compatible with #iferror.
-			return '<span class="error">' . $msg . '</span>';
+			$ret = '<span class="error">' . $e->getMessage() . '</span>';
 		}
 
 		return $ret;

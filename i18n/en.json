@@ -1,12 +1,11 @@
 {
 	"rshiscores-desc": "Provides access to RuneScape's HiScores data for use in wikitext and calculators.",
 	"rshiscores-error-category": "Pages with RSHiScores errors",
-	"rshiscores-error-A": "Player name missing.",
-	"rshiscores-error-B": "Player was not found in RuneScape's HiScores.",
-	"rshiscores-error-C": "Unexpected curl error returned: $1.",
-	"rshiscores-error-D": "Unexpected HTTP status returned: $1.",
-	"rshiscores-error-E": "Name call limit exceeded.",
-	"rshiscores-error-F": "The skill requested does not exist.",
-	"rshiscores-error-G": "The type requested does not exist.",
-	"rshiscores-error-H": "Unexpected API type entered."
+	"rshiscores-error-empty-rsn": "No player name entered.",
+	"rshiscores-error-exceeded-limit": "Too many players requested. No more than $1 are allowed.",
+	"rshiscores-error-request-failed": "Failed to retrieve player data. Try again later.",
+	"rshiscores-error-unknown-api": "The API requested does not exist.",
+	"rshiscores-error-unknown-player": "Player '$1' does not exist.",
+	"rshiscores-error-unknown-skill": "The skill requested does not exist.",
+	"rshiscores-error-unknown-type": "The type requested does not exist."
 }

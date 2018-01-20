@@ -20,10 +20,10 @@ $wgRSHiScoresNameLimit = 2;
 `{{#hs:API|Name|Skill|Type}}`
 - `API` is the name of the HiScores API to get data from.
 - `Name` is the name of the player to get data for.
-- `Skill` is a number that refers to a skill or activity as found in the HiScores API, see [Skills](#skills) for valid values.
-- `Type` is a number that referes to the type of data to return, see [Types](#types) for valid values.
+- `Skill` is a number that refers to a skill or activity as found in the HiScores API, See [RS3 Skills](#rs3-skills) or [OSRS Skills](#osrs-skills) for the known skill values.
+- `Type` is a number that refers to the type of data to return, see [Types](#types) for valid values.
 
-If an error occurs, then an error code will be returned. See [Errors](#errors) for possible errors.
+If an error occurs, then an error message will be returned. See [Errors](#errors) for possible errors.
 
 ##API
 | Name   | API                   |
@@ -127,28 +127,21 @@ If an error occurs, then an error code will be returned. See [Errors](#errors) f
 | 32     | Clue Scrolls (master)              |
 
 ## Types
-| Number | Type                  |
-| ------ | --------------------- |
-| 0      | Rank                  |
-| 1      | Level/Score (default) |
-| 2      | Experience*           |
-
-\* Experience only applies to skill levels.
-
-## Errors
-If there is an error in the usage or request, one of the following codes will be returned instead.
+| Number | Type                     |
+| ------ | ------------------------ |
+| 0      | Rank                     |
+| 1      | Level/Score (default)    |
+| 2      | Experience (Skills only) |
 
 ## Errors
 If there is an error in the usage or request, a message describing the error will be returned instead.
 
-| Error No. | Message | Details |
-| --------- | ------- | ------- |
-| 1         | Player name missing. | No name was entered into the parser function usage. |
-| 2         | Player was not found in RuneScape's HiScores. | The requested player could not be found in the HiScores. |
-| 3         | Unexpected cURL error returned: $1. | A cURL error occurred. See [here](https://curl.haxx.se/libcurl/c/libcurl-errors.html) for more details.
-| 4         | Unexpected HTTP status returned: $1. | A HTTP status that was not 200 or 404 was returned. See [here](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes) for more details.
-| 5         | Name call limit exceeded. | The maximum number of players per page was exceeded, as defined by `$wgRSHiScoresNameLimit`. |
-| 6         | The skill requested does not exist. | <foo> |
-| 7         | The type requested does not exist. | <foo> |
-| 8         | Unexpected API type entered. | The API type entered was not recognised. See [above](#API) for valid types. |
-| 9         | Timeout error returned. All requests are temporarily prevented. | A timeout error occurred, normally caused by too many requests being submitted in too short a time. This causes all requests to be prevented for a cooldown period of 15 minutes, at which point requests can be resumed. |
+| Message | Details |
+| ------- | ------- |
+| No player name entered. | <foo> |
+| Too many players requested. No more than $1 are allowed. |
+| Failed to retrieve player data. Try again later. | An HTTP error occurred, possibly the wiki made too many requests and is temporarily blocked. |
+| The API requested does not exist | See [above](#API) for the valid APIs.
+| Player '$1' does not exist. | <foo> |
+| The skill requested does not exist. | See [RS3 Skills](#rs3-skills) or [OSRS Skills](#osrs-skills) for the known valid skills. |
+| The type requested does not exist. | See [above](#Types) for the valid types. |
