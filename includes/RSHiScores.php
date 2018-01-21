@@ -47,7 +47,7 @@ class RSHiScores {
 		// Return the HiScores data or the error that occurred.
 		if ( $status->isOK() ) {
 			// Player data was returned.
-			return $req->getContent();
+			return trim( $req->getContent() );
 		} elseif ( (int)$req->getStatus() == 404 ) {
 			// Error: Player does not exist.
 			throw new RSHiScoresException( wfMessage( 'rshiscores-error-unknown-player', $player ) );
