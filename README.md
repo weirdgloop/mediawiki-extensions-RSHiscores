@@ -5,7 +5,8 @@ A MediaWiki extension that provides easy access to [RuneScape's HiScores](http:/
 # Installation
 
 1. Clone this repository to the extensions directory of your MediaWiki install.
-2. Add the following to your `LocalSettings.php`
+2. Add the following to your `LocalSettings.php`.
+
 ```php
 wfLoadExtension( 'RSHiScores' );
 
@@ -25,7 +26,7 @@ $wgRSHiScoresNameLimit = 2;
 
 If an error occurs, then an error message will be returned. See [Errors](#errors) for possible errors.
 
-##API
+## API
 | Name   | API                   |
 | ------ | --------------------- |
 | rs3    | RuneScape             |
