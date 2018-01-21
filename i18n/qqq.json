@@ -2,6 +2,7 @@
 	"rshiscores-config-rshiscoresnamelimit": "Configuration description of $wgRSHiScoresNameLimit.",
 	"rshiscores-desc": "{{desc|name=RSHiScores|url=https://gitlab.com/weirdgloop/rshiscores}}",
 	"rshiscores-error-category": "Category for tagging errors returned by the parser function.",
+	"rshiscores-error-category-desc": "Description that the category is for tagging errors returned by the parser function.",
 	"rshiscores-error-empty-rsn": "Error message for missing player name.",
 	"rshiscores-error-exceeded-limit": "Error message for when $wgRSHiScoresNameLimit is exceeded.",
 	"rshiscores-error-request-failed": "Error message for when the HTTP request failed.",

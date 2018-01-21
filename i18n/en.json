@@ -2,6 +2,7 @@
 	"rshiscores-config-rshiscoresnamelimit": "Limit the number of calls to RuneScape's HiScores API. Set to 0 to remove limit.",
 	"rshiscores-desc": "Provides access to RuneScape's HiScores data for use in wikitext and calculators.",
 	"rshiscores-error-category": "Pages with RSHiScores errors",
+	"rshiscores-error-category-desc": "The page contains broken usage of RSHiScores.",
 	"rshiscores-error-empty-rsn": "No player name entered.",
 	"rshiscores-error-exceeded-limit": "Too many players requested. No more than $1 are allowed.",
 	"rshiscores-error-request-failed": "Failed to retrieve player data. Try again later.",
