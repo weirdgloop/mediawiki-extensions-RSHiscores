@@ -1,4 +1,5 @@
 {
+	"rshiscores-config-rshiscoresnamelimit": "Limit the number of calls to RuneScape's HiScores API. Set to 0 to remove limit.",
 	"rshiscores-desc": "Provides access to RuneScape's HiScores data for use in wikitext and calculators.",
 	"rshiscores-error-category": "Pages with RSHiScores errors",
 	"rshiscores-error-empty-rsn": "No player name entered.",

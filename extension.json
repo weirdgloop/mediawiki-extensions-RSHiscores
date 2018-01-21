@@ -35,7 +35,12 @@
 		"rshiscores-error-category"
 	],
 	"config": {
-		"RSHiScoresNameLimit": 2
+		"RSHiScoresNameLimit": {
+			"value": 2,
+			"path": false,
+			"descriptionmsg": "rshiscores-config-rshiscoresnamelimit",
+			"public": true
+		}
 	},
 	"manifest_version": 2
 }
