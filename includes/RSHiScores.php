@@ -8,7 +8,7 @@
  * Main code for the RSHiScores extension.
  */
 class RSHiScores {
-	public static $cache = array();
+	public static $cache = [];
 	public static $times = 0;
 
 	/**
@@ -27,18 +27,32 @@ class RSHiScores {
 		// Determine the URL for the requested HiScores.
 		switch ( $hs ) {
 			case 'rs3':
-				$url = 'http://services.runescape.com/m=hiscore/index_lite.ws?player=' . urlencode( $player );
+				$url = 'https://secure.runescape.com/m=hiscore/index_lite.ws?player=';
+				break;
+			case 'rs3-ironman':
+				$url = 'https://secure.runescape.com/m=hiscore_ironman/index_lite.ws?player=';
+				break;
+			case 'rs3-hardcore':
+				$url = 'https://secure.runescape.com/m=hiscore_hardcore_ironman/index_lite.ws?player=';
 				break;
 			case 'osrs':
-				$url = 'http://services.runescape.com/m=hiscore_oldschool/index_lite.ws?player=' . urlencode( $player );
+				$url = 'https://services.runescape.com/m=hiscore_oldschool/index_lite.ws?player=';
+				break;
+			case 'osrs-ironman':
+				$url = 'https://services.runescape.com/m=hiscore_oldschool_ironman/index_lite.ws?player=';
+				break;
+			case 'osrs-ultimate':
+				$url = 'https://services.runescape.com/m=hiscore_oldschool_ultimate/index_lite.ws?player=';
 				break;
 			default:
 				// Error: Unknown API. Should never be reached, because it is already checked in getHiScores.
 				throw new RSHiScoresException( wfMessage( 'rshiscores-error-unknown-api' ) );
 		}
 
+		$url .= urlencode( $player );
+
 		// Be a good netizen by including the extension name and wiki server URL in the user agent.
-		$options = array( 'userAgent' => Http::userAgent() . " (RSHiScores: $wgCanonicalServer)" );
+		$options = [ 'userAgent' => Http::userAgent() . " (RSHiScores: $wgCanonicalServer)" ];
 
 		// Retrieve the HiScores.
 		$req = MWHttpRequest::factory( $url, $options );
