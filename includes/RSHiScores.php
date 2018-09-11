@@ -10,21 +10,41 @@
 class RSHiScores {
 	public static $cache = [];
 	public static $times = 0;
+	private const BLACKLIST_TIMEOUT = 15 * 60;
+
 
 	/**
-	 * Retrieve the raw HiScores data from RuneScape.
+	 * Store when we've been blacklisted in memcached to prevent other requests going out.
+	 */
+	private static function setBlacklisted() {
+		$memcache = ObjectCache::getMainWANInstance();
+		$key = $memcached->makeKey('rshiscores', 'blacklisted');
+
+		$memcached->set( $key, 1, self::BLACKLIST_TIMEOUT );
+	}
+
+	/**
+	 * Check if we're currently blacklisted.
 	 *
-	 * @param string $hs Which HiScores API to retrieve from.
-	 * @param string $player Player's display name.
+	 * @return bool Whether we're blacklisted or not.
+	 */
+	private static function isBlacklisted() {
+		$memcache = ObjectCache::getMainWANInstance();
+		$key = $memcached->makeKey('rshiscores', 'blacklisted');
+
+		return $memcached->get( $key ) !== NULL;
+	}
+
+	/**
+	 * Get the URL for the given API.
 	 *
-	 * @return string Raw HiScores data.
+	 * @param string $hs Which HiScores API to check.
+	 *
+	 * @return string The HiScores URL to use.
 	 *
 	 * @throws RSHiScoresException on error.
 	 */
-	private static function retrieveHiScores( $hs, $player ) {
-		global $wgCanonicalServer;
-
-		// Determine the URL for the requested HiScores.
+	private static function getApi( $hs ) {
 		switch ( $hs ) {
 			case 'rs3':
 				$url = 'https://secure.runescape.com/m=hiscore/index_lite.ws?player=';
@@ -49,7 +69,28 @@ class RSHiScores {
 				throw new RSHiScoresException( wfMessage( 'rshiscores-error-unknown-api' ) );
 		}
 
-		$url .= urlencode( $player );
+		return $url;
+	}
+
+	/**
+	 * Retrieve the raw HiScores data from RuneScape.
+	 *
+	 * @param string $hs Which HiScores API to retrieve from.
+	 * @param string $player Player's display name.
+	 *
+	 * @return string Raw HiScores data.
+	 *
+	 * @throws RSHiScoresException on error.
+	 */
+	private static function retrieveHiScores( $hs, $player ) {
+		global $wgCanonicalServer;
+
+		// Determine the URL for the requested HiScores.
+		$url = self::getApi( $hs ) . urlencode( $player );
+
+		if ( self::isBlacklisted() ) {
+			throw new RSHiScoresException( wfMessage( 'rshiscores-error-request-failed' ) );
+		}
 
 		// Be a good netizen by including the extension name and wiki server URL in the user agent.
 		$options = ['userAgent' => Http::userAgent() . " (RSHiScores: $wgCanonicalServer)"];
@@ -59,7 +100,8 @@ class RSHiScores {
 		$status = $req->execute();
 
 		// Return the HiScores data or the error that occurred.
-		if ( (int)$req->getStatus() == 200 ) { // isOK and isGood will allow 300 redirect codes, not ideal
+		// isOK and isGood will allow 300 redirect codes, not ideal.
+		if ( (int)$req->getStatus() == 200 ) {
 			// Player data was returned.
 			return trim( $req->getContent() );
 		} elseif ( (int)$req->getStatus() == 404 ) {
@@ -68,6 +110,9 @@ class RSHiScores {
 		} else {
 			// Log request failures.
 			wfDebugLog( 'rshiscores', "Requested '$url'. Returned error '" . explode( ' ', $req->getStatus(), 2 ) . "' instead." );
+
+			// Assume we've been temporarily blacklisted so prevent requests for the next 15 minutes
+			self::setBlackListed();
 
 			// Error: Request failed.
 			throw new RSHiScoresException( wfMessage( 'rshiscores-error-request-failed' ) );
@@ -118,10 +163,8 @@ class RSHiScores {
 	private static function getHiScores( $hs, $player, $skill, $type ) {
 		global $wgRSHiScoresNameLimit;
 
-		if ( $hs != 'rs3' && $hs != 'osrs' ) {
-			// Error: Unknown API.
-			throw new RSHiScoresException( wfMessage( 'rshiscores-error-unknown-api' ) );
-		}
+		// Ensure the API is recognised
+		self::getApi( $hs );
 
 		$player = trim( $player );
 
