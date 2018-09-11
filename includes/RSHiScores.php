@@ -45,7 +45,7 @@ class RSHiScores {
 		$status = $req->execute();
 
 		// Return the HiScores data or the error that occurred.
-		if ( $status->isOK() ) {
+		if ( $status->isGood() ) {
 			// Player data was returned.
 			return trim( $req->getContent() );
 		} elseif ( (int)$req->getStatus() == 404 ) {
