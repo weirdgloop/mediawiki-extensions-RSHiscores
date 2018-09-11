@@ -45,7 +45,7 @@ class RSHiScores {
 		$status = $req->execute();
 
 		// Return the HiScores data or the error that occurred.
-		if ( $status->isGood() ) {
+		if ( (int)$req->getStatus() == 200 ) { // isOK and isGood will allow 300 redirect codes, not ideal
 			// Player data was returned.
 			return trim( $req->getContent() );
 		} elseif ( (int)$req->getStatus() == 404 ) {
