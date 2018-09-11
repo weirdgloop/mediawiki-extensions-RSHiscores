@@ -52,7 +52,7 @@ class RSHiScores {
 		$url .= urlencode( $player );
 
 		// Be a good netizen by including the extension name and wiki server URL in the user agent.
-		$options = [ 'userAgent' => Http::userAgent() . " (RSHiScores: $wgCanonicalServer)" ];
+		$options = ['userAgent' => Http::userAgent() . " (RSHiScores: $wgCanonicalServer)"];
 
 		// Retrieve the HiScores.
 		$req = MWHttpRequest::factory( $url, $options );
