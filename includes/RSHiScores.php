@@ -17,10 +17,10 @@ class RSHiScores {
 	 * Store when we've been blacklisted in memcached to prevent other requests going out.
 	 */
 	private static function setBlacklisted() {
-		$memcache = ObjectCache::getMainWANInstance();
-		$key = $memcached->makeKey('rshiscores', 'blacklisted');
+		$objcache = MediaWikiServices::getInstance()->getMainWANObjectCache();
+		$key = $objcache->makeKey( 'rshiscores', 'blacklisted' );
 
-		$memcached->set( $key, 1, self::BLACKLIST_TIMEOUT );
+		$objcache->set( $key, 1, self::BLACKLIST_TIMEOUT );
 	}
 
 	/**
@@ -29,10 +29,10 @@ class RSHiScores {
 	 * @return bool Whether we're blacklisted or not.
 	 */
 	private static function isBlacklisted() {
-		$memcache = ObjectCache::getMainWANInstance();
-		$key = $memcached->makeKey('rshiscores', 'blacklisted');
+		$objcache = MediaWikiServices::getInstance()->getMainWANObjectCache();
+		$key = $objcache->makeKey( 'rshiscores', 'blacklisted' );
 
-		return $memcached->get( $key ) !== NULL;
+		return $objcache->get( $key ) !== NULL;
 	}
 
 	/**
