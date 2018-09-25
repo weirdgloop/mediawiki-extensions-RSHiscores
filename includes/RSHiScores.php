@@ -7,6 +7,9 @@
  *
  * Main code for the RSHiScores extension.
  */
+
+use MediaWiki\MediaWikiServices;
+
 class RSHiScores {
 	public static $cache = [];
 	public static $times = 0;
