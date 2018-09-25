@@ -35,7 +35,8 @@ class RSHiScores {
 		$objcache = MediaWikiServices::getInstance()->getLocalServerObjectCache();
 		$key = $objcache->makeKey( 'rshiscores', 'blacklisted' );
 
-		return $objcache->get( $key ) !== NULL;
+		//return $objcache->get( $key ) !== NULL;
+		return false; // TODO: Fix blacklisting.
 	}
 
 	/**
