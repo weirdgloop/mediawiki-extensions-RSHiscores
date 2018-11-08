@@ -144,7 +144,7 @@ If there is an error in the usage or request, a message describing the error wil
 | Skill parameter must be a number. |
 | Type parameter must be a number. |
 | Failed to retrieve player data. Try again later. | An HTTP error occurred, possibly the wiki made too many requests and is temporarily blocked. |
-| The API requested does not exist | See [above](#api) for the valid APIs.
+| The API requested does not exist. | See [above](#api) for the valid APIs.
 | Player '$1' does not exist. | <foo> |
 | The skill requested does not exist. | See [RS3 Skills](#rs3-skills) or [OSRS Skills](#osrs-skills) for the known valid skills. |
 | The type requested does not exist. | See [above](#Types) for the valid types. |
