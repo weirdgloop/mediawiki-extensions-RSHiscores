@@ -110,7 +110,7 @@ class RSHiScores {
 			return trim( $req->getContent() );
 		} elseif ( (int)$req->getStatus() == 404 ) {
 			// Error: Player does not exist.
-			throw new RSHiScoresException( wfMessage( 'rshiscores-error-unknown-player', $player ) );
+			throw new RSHiScoresException( wfMessage( 'rshiscores-error-unknown-player', $player ), false );
 		} else {
 			// Log request failures.
 			wfDebugLog( 'rshiscores', "Requested '$url'. Returned error '" . explode( ' ', $req->getStatus(), 2 ) . "' instead." );
@@ -229,7 +229,10 @@ class RSHiScores {
 		try {
 			$ret = self::getHiScores( $hs, $player, $skill, $type );
 		} catch ( RSHiScoresException $e ) {
-			$parser->addTrackingCategory( 'rshiscores-error-category' );
+			// Add the page to the RSHiScores error tracking category if a true-evaluated error code is returned.
+			if ( $e->getCode() ) {
+				$parser->addTrackingCategory( 'rshiscores-error-category' );
+			}
 
 			// Return an error format compatible with #iferror.
 			$ret = '<span class="error">' . $e->getMessage() . '</span>';
