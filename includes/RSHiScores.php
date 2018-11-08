@@ -14,6 +14,9 @@ class RSHiScores {
 	public static $cache = [];
 	public static $times = 0;
 	private const BLACKLIST_TIMEOUT = 15 * 60;
+	private const ERROR_PREVIOUS = 1;
+	private const ERROR_SKIPPABLE = 2;
+	private const ERROR_SUPPRESS_CATEGORY = 3;
 
 
 	/**
@@ -110,7 +113,7 @@ class RSHiScores {
 			return trim( $req->getContent() );
 		} elseif ( (int)$req->getStatus() == 404 ) {
 			// Error: Player does not exist.
-			throw new RSHiScoresException( wfMessage( 'rshiscores-error-unknown-player', $player ), false );
+			throw new RSHiScoresException( wfMessage( 'rshiscores-error-unknown-player', $player ), self::ERROR_SUPPRESS_CATEGORY );
 		} else {
 			// Log request failures.
 			wfDebugLog( 'rshiscores', "Requested '$url'. Returned error '" . explode( ' ', $req->getStatus(), 2 ) . "' instead." );
@@ -139,14 +142,14 @@ class RSHiScores {
 
 		if ( !array_key_exists( $skill, $data ) ) {
 			// Error: Skill does not exist.
-			throw new RSHiScoresException( wfMessage( 'rshiscores-error-unknown-skill' ) );
+			throw new RSHiScoresException( wfMessage( 'rshiscores-error-unknown-skill' ), self::ERROR_SKIPPABLE );
 		}
 
 		$data = explode( ',', $data[$skill], $type + 2 );
 
 		if ( !array_key_exists( $type, $data ) ) {
 			// Error: Type does not exist.
-			throw new RSHiScoresException( wfMessage( 'rshiscores-error-unknown-type' ) );
+			throw new RSHiScoresException( wfMessage( 'rshiscores-error-unknown-type' ), self::ERROR_SKIPPABLE );
 		}
 
 		return $data[$type];
@@ -187,6 +190,11 @@ class RSHiScores {
 		} elseif ( array_key_exists( $hs, self::$cache ) && array_key_exists( $player, self::$cache[$hs] ) ) {
 			// Get the HiScores data from the cache.
 			$data = self::$cache[$hs][$player];
+
+			if ( $data === '' ) {
+				// Error: See previous error.
+				throw new RSHiScoresException( wfMessage( 'rshiscores-error-previous' ), self::ERROR_PREVIOUS );
+			}
 
 		} elseif ( self::$times < $wgRSHiScoresNameLimit || $wgRSHiScoresNameLimit <= 0 ) {
 			// Update the name limit counter.
@@ -229,9 +237,16 @@ class RSHiScores {
 		try {
 			$ret = self::getHiScores( $hs, $player, $skill, $type );
 		} catch ( RSHiScoresException $e ) {
-			// Add the page to the RSHiScores error tracking category if a true-evaluated error code is returned.
-			if ( $e->getCode() ) {
+			$errCode = $e->getCode();
+
+			// Only add the exception to the RSHiScores error tracking category if it's wanted.
+			if ( $errCode != self::ERROR_PREVIOUS && $errCode != self::ERROR_SUPPRESS_CATEGORY ) {
 				$parser->addTrackingCategory( 'rshiscores-error-category' );
+			}
+
+			// If the error would repeat itself, signal to future calls to error out early.
+			if ( $errCode != self::ERROR_SKIPPABLE ) {
+				self::$cache[$hs][$player] = '';
 			}
 
 			// Return an error format compatible with #iferror.

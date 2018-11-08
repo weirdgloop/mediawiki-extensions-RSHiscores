@@ -7,6 +7,7 @@
 	"rshiscores-error-exceeded-limit": "Error message for when $wgRSHiScoresNameLimit is exceeded.",
 	"rshiscores-error-invalid-skill": "Error message for when the skill parameter provided is non-numeric.",
 	"rshiscores-error-invalid-type": "Error message for when the type parameter provided is non-numeric.",
+	"rshiscores-error-previous": "Error message for when a previous error has occurred.",
 	"rshiscores-error-request-failed": "Error message for when the HTTP request failed.",
 	"rshiscores-error-unknown-api": "Error message for when the API requested does not exist.",
 	"rshiscores-error-unknown-player": "Error message for when the player requested does not exist.",

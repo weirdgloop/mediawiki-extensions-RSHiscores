@@ -7,6 +7,7 @@
 	"rshiscores-error-exceeded-limit": "Too many players requested. No more than $1 are allowed.",
 	"rshiscores-error-invalid-skill": "Skill parameter must be a number.",
 	"rshiscores-error-invalid-type": "Type parameter must be a number.",
+	"rshiscores-error-previous": "See previous error.",
 	"rshiscores-error-request-failed": "Failed to retrieve player data. Try again later.",
 	"rshiscores-error-unknown-api": "The API requested does not exist.",
 	"rshiscores-error-unknown-player": "Player '$1' does not exist.",

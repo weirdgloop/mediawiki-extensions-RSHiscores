@@ -143,6 +143,7 @@ If there is an error in the usage or request, a message describing the error wil
 | Too many players requested. No more than $1 are allowed. |
 | Skill parameter must be a number. |
 | Type parameter must be a number. |
+| See previous error. | An error has already occurred in earlier usage. |
 | Failed to retrieve player data. Try again later. | An HTTP error occurred, possibly the wiki made too many requests and is temporarily blocked. |
 | The API requested does not exist. | See [above](#api) for the valid APIs.
 | Player '$1' does not exist. | <foo> |
