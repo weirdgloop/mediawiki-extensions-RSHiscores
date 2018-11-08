@@ -12,11 +12,10 @@ class RSHiScoresException extends Exception {
 	 * Constructor to change the returned message to be in the page's content language.
 	 *
 	 * @param Message $message Error message made from wfMessage.
-	 * @param int $code Optional error code. Treated as a boolean by RSHiscores, if $code evaluates to true,
-	 *                  which it is by default, then add the page to the RSHiscores error tracking category.
+	 * @param int $code Optional error code. Unused by RSHiScores.
 	 * @param Exception $previous Exception that caused this exception. Unused by RSHiScores.
 	 */
-	public function __construct( Message $message, $code = 1, Exception $previous = null ) {
+	public function __construct( Message $message, $code = 0, Exception $previous = null ) {
 		parent::__construct( $message->inContentLanguage()->parse(), $code, $previous );
 	}
 }
