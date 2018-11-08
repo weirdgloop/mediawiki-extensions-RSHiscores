@@ -176,6 +176,14 @@ class RSHiScores {
 			// Error: No player name was entered.
 			throw new RSHiScoresException( wfMessage( 'rshiscores-error-empty-rsn' ) );
 
+		} elseif ( filter_var( $skill, FILTER_VALIDATE_INT ) === false ) {
+			// Error: Skill parameter must be a number.
+			throw new RSHiScoresException( wfMessage( 'rshiscores-error-invalid-skill' ) );
+
+		} elseif ( filter_var( $type, FILTER_VALIDATE_INT ) === false ) {
+			// Error: Type parameter must be a number.
+			throw new RSHiScoresException( wfMessage( 'rshiscores-error-invalid-type' ) );
+
 		} elseif ( array_key_exists( $hs, self::$cache ) && array_key_exists( $player, self::$cache[$hs] ) ) {
 			// Get the HiScores data from the cache.
 			$data = self::$cache[$hs][$player];
@@ -217,7 +225,7 @@ class RSHiScores {
 	 *
 	 * @return string
 	 */
-	public static function renderHiScores( Parser &$parser, $hs = 'rs3', $player = '', $skill = -1, $type = 1 ) {
+	public static function renderHiScores( Parser &$parser, $hs = 'rs3', $player = '', $skill = '-1', $type = '1' ) {
 		try {
 			$ret = self::getHiScores( $hs, $player, $skill, $type );
 		} catch ( RSHiScoresException $e ) {
