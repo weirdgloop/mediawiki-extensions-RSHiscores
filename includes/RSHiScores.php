@@ -63,13 +63,25 @@ class RSHiScores {
 				$url = 'https://secure.runescape.com/m=hiscore_hardcore_ironman/index_lite.ws?player=';
 				break;
 			case 'osrs':
-				$url = 'https://services.runescape.com/m=hiscore_oldschool/index_lite.ws?player=';
+				$url = 'https://secure.runescape.com/m=hiscore_oldschool/index_lite.ws?player=';
 				break;
 			case 'osrs-ironman':
-				$url = 'https://services.runescape.com/m=hiscore_oldschool_ironman/index_lite.ws?player=';
+				$url = 'https://secure.runescape.com/m=hiscore_oldschool_ironman/index_lite.ws?player=';
+				break;
+			case 'osrs-hardcore':
+				$url = 'https://secure.runescape.com/m=hiscore_oldschool_hardcore_ironman/index_lite.ws?player=';
 				break;
 			case 'osrs-ultimate':
-				$url = 'https://services.runescape.com/m=hiscore_oldschool_ultimate/index_lite.ws?player=';
+				$url = 'https://secure.runescape.com/m=hiscore_oldschool_ultimate/index_lite.ws?player=';
+				break;
+			case 'osrs-deadman':
+				$url = 'https://secure.runescape.com/m=hiscore_oldschool_deadman/index_lite.ws?player=';
+				break;
+			case 'osrs-seasonal':
+				$url = 'https://secure.runescape.com/m=hiscore_oldschool_seasonal/index_lite.ws?player=';
+				break;
+			case 'osrs-tournament':
+				$url = 'https://secure.runescape.com/m=hiscore_oldschool_tournament/index_lite.ws?player=';
 				break;
 			default:
 				// Error: Unknown API. Should never be reached, because it is already checked in getHiScores.
