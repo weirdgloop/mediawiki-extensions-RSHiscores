@@ -115,20 +115,24 @@ class RSHiScores {
 		$options = ['userAgent' => Http::userAgent() . " (RSHiScores: $wgCanonicalServer)"];
 
 		// Retrieve the HiScores.
-		$req = MWHttpRequest::factory( $url, $options );
-		$status = $req->execute();
+		$req = MediaWikiServices::getInstance()->getHttpRequestFactory()->create( $url, $options, __METHOD__ );
+		$reqStatus = $req->execute();
+		$httpStatus = $req->getStatus();
 
 		// Return the HiScores data or the error that occurred.
-		// isOK and isGood will allow 300 redirect codes, not ideal.
-		if ( (int)$req->getStatus() == 200 ) {
+		if ( $httpStatus === 200 ) {
 			// Player data was returned.
 			return trim( $req->getContent() );
-		} elseif ( (int)$req->getStatus() == 404 ) {
+		} elseif ( $httpStatus === 404 ) {
 			// Error: Player does not exist.
 			throw new RSHiScoresException( wfMessage( 'rshiscores-error-unknown-player', $player ), self::ERROR_SUPPRESS_CATEGORY );
 		} else {
 			// Log request failures.
-			wfDebugLog( 'rshiscores', "Requested '$url'. Returned error '" . explode( ' ', $req->getStatus(), 2 ) . "' instead." );
+			if ( $reqStatus->isOK() ) {
+				wfDebugLog( 'rshiscores', "Requested '$url'. Returned HTTP status code '$httpStatus' instead." );
+			} else {
+				wfDebugLog( 'rshiscores', "Requested '$url'. Returned Error: " . Status::wrap( $reqStatus )->getWikitext() );
+			}
 
 			// Assume we've been temporarily blacklisted so prevent requests for the next 15 minutes
 			self::setBlackListed();
