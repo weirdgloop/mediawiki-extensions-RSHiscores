@@ -1,17 +1,17 @@
 {
 	"name": "RSHiScores",
-	"version": "3.2.0",
+	"version": "3.3.0",
 	"author": [
 		"[https://runescape.wiki/w/User_talk:TehKittyCat TehKittyCat]",
 		"[https://runescape.wiki/w/User:Quarenon Quarenon]",
 		"[https://runescape.wiki/w/User:Cqm Cqm]"
 	],
-	"url": "https://gitlab.com/weirdgloop/rshiscores",
+	"url": "https://gitlab.com/weirdgloop/extensions/rshiscores",
 	"descriptionmsg": "rshiscores-desc",
 	"license-name": "GPL-3.0+",
 	"type": "parserhook",
 	"requires": {
-		"MediaWiki": ">=1.29.0"
+		"MediaWiki": ">=1.35.0"
 	},
 	"MessagesDirs": {
 		"RSHiScores": [
@@ -19,17 +19,18 @@
 		]
 	},
 	"ExtensionMessagesFiles": {
-		"RSHiScoresMagic": "includes/RSHiScoresMagic.php"
+		"RSHiScoresMagic": "src/magic.php"
 	},
-	"AutoloadClasses": {
-		"RSHiScores": "includes/RSHiScores.php",
-		"RSHiScoresException": "includes/RSHiScoresException.php",
-		"RSHiScoresHooks": "includes/RSHiScoresHooks.php"
+	"AutoloadNamespaces": {
+		"MediaWiki\\Extension\\RSHiScores\\": "src/"
+	},
+	"HookHandlers": {
+		"RSHiScoresHooks": {
+			"class": "MediaWiki\\Extension\\RSHiScores\\Hooks"
+		}
 	},
 	"Hooks": {
-		"ParserFirstCallInit": [
-			"RSHiScoresHooks::onParserFirstCallInit"
-		]
+		"ParserFirstCallInit": "RSHiScoresHooks"
 	},
 	"TrackingCategories": [
 		"rshiscores-error-category"
