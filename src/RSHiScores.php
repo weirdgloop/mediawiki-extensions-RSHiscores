@@ -42,7 +42,7 @@ class RSHiScores {
 		$objcache = MediaWikiServices::getInstance()->getLocalServerObjectCache();
 		$key = $objcache->makeKey( 'rshiscores', 'blocked' );
 
-		return $objcache->get( $key ) !== NULL;
+		return $objcache->get( $key ) === 1;
 	}
 
 	/**
