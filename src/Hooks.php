@@ -11,7 +11,6 @@
 namespace MediaWiki\Extension\RSHiScores;
 
 use MediaWiki\Hook\ParserFirstCallInitHook;
-use Parser;
 
 class Hooks implements ParserFirstCallInitHook {
 	/**
@@ -21,7 +20,7 @@ class Hooks implements ParserFirstCallInitHook {
 	 *
 	 * @param Parser $parser
 	 */
-	public function onParserFirstCallInit( Parser $parser ) {
+	public function onParserFirstCallInit( $parser ) {
 		$parser->setFunctionHook( 'hs', [ RSHiScores::class, 'render' ] );
 	}
 }
