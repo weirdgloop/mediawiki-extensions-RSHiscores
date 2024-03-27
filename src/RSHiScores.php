@@ -10,7 +10,6 @@
 
 namespace MediaWiki\Extension\RSHiScores;
 
-use Http;
 use MediaWiki\MediaWikiServices;
 use Parser;
 use Status;
@@ -114,11 +113,13 @@ class RSHiScores {
 			throw new Exception( wfMessage( 'rshiscores-error-request-failed' ) );
 		}
 
+		$http = MediaWikiServices::getInstance()->getHttpRequestFactory();
+
 		// Be a good netizen by including the extension name and wiki server URL in the user agent.
-		$options = ['userAgent' => Http::userAgent() . " (RSHiScores: $wgCanonicalServer)"];
+		$options = ['userAgent' => $http->getUserAgent() . " (RSHiScores: $wgCanonicalServer)"];
 
 		// Fetch the HiScores.
-		$req = MediaWikiServices::getInstance()->getHttpRequestFactory()->create( $url, $options, __METHOD__ );
+		$req = $http->create( $url, $options, __METHOD__ );
 		$reqStatus = $req->execute();
 		$httpStatus = $req->getStatus();
 
