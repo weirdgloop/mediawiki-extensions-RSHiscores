@@ -100,13 +100,13 @@ class RSHiScores {
 	 * Fetch the raw HiScores data from RuneScape.
 	 *
 	 * @param string $api Which HiScores API to fetch from.
-	 * @param string $player Player's display name.
+	 * @param string $player Player's display name, for error message.
 	 *
 	 * @return string Raw HiScores data.
 	 *
 	 * @throws Exception on error.
 	 */
-	private static function fetch( $url ) {
+	private static function fetch( $url, $player ) {
 		global $wgCanonicalServer;
 
 		if ( self::isBlocked() ) {
@@ -243,7 +243,7 @@ class RSHiScores {
 			self::$times++;
 
 			// Get the HiScores data from the site.
-			$data = self::fetch( $apiUrl );
+			$data = self::fetch( $apiUrl, $player );
 
 			// Do some reformatting & html escaping of the received data
 			$data = self::postFetch( $data, $extension );

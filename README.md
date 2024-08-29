@@ -18,11 +18,12 @@ $wgRSHiScoresNameLimit = 2;
 
 # Usage
 
-`{{#hs:API|Name|Skill|Type}}`
+`{{#hs:API|Name|Skill|Type|Extension}}`
 - `API` is the name of the HiScores API to get data from.
 - `Name` is the name of the player to get data for.
-- `Skill` is a number that refers to a skill or activity as found in the HiScores API, See [RS3 Skills](#rs3-skills) or [OSRS Skills](#osrs-skills) for the known skill values.
-- `Type` is a number that refers to the type of data to return, see [Types](#types) for valid values.
+- `Skill` refers to a skill or activity on the HiScores api. If not using json extension, this must be a number. See [RS3 Skills](#rs3-skills) or [OSRS Skills](#osrs-skills) for the known skill values.
+- `Type` refers to the type of data to receive. If using json, use 'level', 'xp', 'rank' or 'score'. If not, it must be a number. see [Types](#types) for valid values.
+- `Extension` is either `json` or `ws`, for explicitly stating which type of data (csv or json) to receive from the endpoint.
 
 If an error occurs, then an error message will be returned. See [Errors](#errors) for possible errors.
 
@@ -149,3 +150,6 @@ If there is an error in the usage or request, a message describing the error wil
 | Player '$1' does not exist. | <foo> |
 | The skill requested does not exist. | See [RS3 Skills](#rs3-skills) or [OSRS Skills](#osrs-skills) for the known valid skills. |
 | The type requested does not exist. | See [above](#Types) for the valid types. |
+| Extension not recognised. Should be 'ws', 'json' or 'auto'. |
+| Endpoint returned invalid json. | The Jagex hiscores endpoint returned an unexpected format. Jagex should fix their endpoint. |
+| Endpoint returned unexpected data. | The Jagex hiscores endpoint returned an unexpected format. Maybe this extension needs to be updated. |
