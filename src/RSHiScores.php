@@ -21,6 +21,8 @@ class RSHiScores {
 	private const ERROR_PREVIOUS = 1;
 	private const ERROR_SKIPPABLE = 2;
 	private const ERROR_SUPPRESS_CATEGORY = 3;
+	private const DEFAULT_TYPE = 'auto';
+	private const ALL_SKILLS = 'jsondump';
 
 	/**
 	 * Store when we've been blocked in cache to prevent other requests from going out.
@@ -56,25 +58,25 @@ class RSHiScores {
 	private static function getUrl( $api ) {
 		switch ( $api ) {
 			case 'rs3':
-				$url = 'https://secure.runescape.com/m=hiscore/index_lite.ws?player=';
+				$url = 'https://secure.runescape.com/m=hiscore/index_lite.json?player=';
 				break;
 			case 'rs3-ironman':
-				$url = 'https://secure.runescape.com/m=hiscore_ironman/index_lite.ws?player=';
+				$url = 'https://secure.runescape.com/m=hiscore_ironman/index_lite.json?player=';
 				break;
 			case 'rs3-hardcore':
-				$url = 'https://secure.runescape.com/m=hiscore_hardcore_ironman/index_lite.ws?player=';
+				$url = 'https://secure.runescape.com/m=hiscore_hardcore_ironman/index_lite.json?player=';
 				break;
 			case 'osrs':
-				$url = 'https://secure.runescape.com/m=hiscore_oldschool/index_lite.ws?player=';
+				$url = 'https://secure.runescape.com/m=hiscore_oldschool/index_lite.json?player=';
 				break;
 			case 'osrs-ironman':
-				$url = 'https://secure.runescape.com/m=hiscore_oldschool_ironman/index_lite.ws?player=';
+				$url = 'https://secure.runescape.com/m=hiscore_oldschool_ironman/index_lite.json?player=';
 				break;
 			case 'osrs-hardcore':
-				$url = 'https://secure.runescape.com/m=hiscore_oldschool_hardcore_ironman/index_lite.ws?player=';
+				$url = 'https://secure.runescape.com/m=hiscore_oldschool_hardcore_ironman/index_lite.json?player=';
 				break;
 			case 'osrs-ultimate':
-				$url = 'https://secure.runescape.com/m=hiscore_oldschool_ultimate/index_lite.ws?player=';
+				$url = 'https://secure.runescape.com/m=hiscore_oldschool_ultimate/index_lite.json?player=';
 				break;
 			case 'osrs-skiller':
 				$url = 'https://secure.runescape.com/m=hiscore_oldschool_skiller/index_lite.ws?player=';
@@ -83,13 +85,13 @@ class RSHiScores {
 				$url = 'https://secure.runescape.com/m=hiscore_oldschool_skiller_defence/index_lite.ws?player=';
 				break;
 			case 'osrs-deadman':
-				$url = 'https://secure.runescape.com/m=hiscore_oldschool_deadman/index_lite.ws?player=';
+				$url = 'https://secure.runescape.com/m=hiscore_oldschool_deadman/index_lite.json?player=';
 				break;
 			case 'osrs-seasonal':
-				$url = 'https://secure.runescape.com/m=hiscore_oldschool_seasonal/index_lite.ws?player=';
+				$url = 'https://secure.runescape.com/m=hiscore_oldschool_seasonal/index_lite.json?player=';
 				break;
 			case 'osrs-tournament':
-				$url = 'https://secure.runescape.com/m=hiscore_oldschool_tournament/index_lite.ws?player=';
+				$url = 'https://secure.runescape.com/m=hiscore_oldschool_tournament/index_lite.json?player=';
 				break;
 			default:
 				// Error: Unknown API. Should never be reached, because it is already checked in self::lookup().
@@ -153,41 +155,12 @@ class RSHiScores {
 	}
 
 	/**
-	 * Parse the HiScores data.
-	 *
-	 * @param string $data Raw HiScores data.
-	 * @param int $skill Index representing the requested skill.
-	 * @param int $type Index representing the requested type of data for the given skill.
-	 *
-	 * @return string Requested potion of the RSHiScores data.
-	 *
-	 * @throws Exception on error.
-	 */
-	private static function parse( $data, $skill, $type ) {
-		$data = explode( "\n", $data, $skill + 2 );
-
-		if ( !array_key_exists( $skill, $data ) ) {
-			// Error: Skill does not exist.
-			throw new Exception( wfMessage( 'rshiscores-error-unknown-skill' ), self::ERROR_SKIPPABLE );
-		}
-
-		$data = explode( ',', $data[$skill], $type + 2 );
-
-		if ( !array_key_exists( $type, $data ) ) {
-			// Error: Type does not exist.
-			throw new Exception( wfMessage( 'rshiscores-error-unknown-type' ), self::ERROR_SKIPPABLE );
-		}
-
-		return $data[$type];
-	}
-
-	/**
 	 * Attempt to lookup hiscore data in the cache, or looks it up in the API if not found.
 	 *
 	 * @param string $api Which HiScores API to use.
 	 * @param string $player Player's display name. Can not be empty.
-	 * @param int $skill Index representing the requested skill. Leave as -1 for requesting the raw data.
-	 * @param int $type Index representing the requested type of data for the given skill.
+	 * @param string $skill String representing the requested skill. Leave as self::ALL_SKILLS for requesting the raw data.
+	 * @param string $type String representing the requested type of data for the given skill. Set to self::DEFAULT_TYPE for xp or score.
 	 *
 	 * @return string
 	 *
@@ -201,16 +174,16 @@ class RSHiScores {
 
 		$player = trim( $player );
 
-		if( $player == '' ) {
+		if( $player === '' ) {
 			// Error: No player name was entered.
 			throw new Exception( wfMessage( 'rshiscores-error-empty-rsn' ) );
 
-		} elseif ( filter_var( $skill, FILTER_VALIDATE_INT ) === false ) {
-			// Error: Skill parameter must be a number.
+		} elseif ( filter_var( $skill, FILTER_VALIDATE_INT ) !== false ) {
+			// Error: Skill parameter must not be a number; That was old behaviour
 			throw new Exception( wfMessage( 'rshiscores-error-invalid-skill' ) );
 
-		} elseif ( filter_var( $type, FILTER_VALIDATE_INT ) === false ) {
-			// Error: Type parameter must be a number.
+		} elseif ( filter_var( $type, FILTER_VALIDATE_INT ) !== false ) {
+			// Error: Type parameter must be a number; That was old behaviour
 			throw new Exception( wfMessage( 'rshiscores-error-invalid-type' ) );
 
 		} elseif ( array_key_exists( $api, self::$cache ) && array_key_exists( $player, self::$cache[$api] ) ) {
@@ -230,7 +203,7 @@ class RSHiScores {
 			$data = self::fetch( $api, $player );
 
 			// Escape the result as it's from an external API.
-			$data = htmlspecialchars( $data, ENT_QUOTES );
+			$data = self::postFetch( $data );
 
 			// Add the HiScores data to the cache.
 			self::$cache[$api][$player] = $data;
@@ -241,11 +214,96 @@ class RSHiScores {
 
 		// Finally, return the raw string for use in JS calcs,
 		// or if requested, parse the HiScores data.
-		if ( $skill < 0 ) {
-			return $data;
+		if ( $skill === self::ALL_SKILLS ) {
+			return json_encode( $data );
 		} else {
-			return self::parse( $data, $skill, $type );
+			return self::getSingleSkillData( $data, $skill, $type );
 		}
+	}
+
+	/**
+	 * Do some post-processing of the data from the endpoint.
+	 * Most notably html-escape data from untrusted API
+	 *
+	 * @param string $data The received data
+	 * @return array The processed data
+	 */
+	private static function postFetch( $data ) {
+		$data = json_decode( $data, true );
+		if ( !is_array( $data ) ) {
+			// Error: Endpoint returned invalid json
+			throw new Exception( wfMessage( 'rshiscores-error-invalid-json' ) );
+		}
+
+		// Index all skills/activities in flat array by lowercase key, for easy lookup.
+		$parsedData = [];
+		foreach ( $data as $skillOrActivity => $stats ) {
+			foreach ( $stats as $stat ) {
+				if ( isset( $stat['name'] ) ) {
+					$parsedData[ self::escapeStrings( strtolower( $stat[ 'name' ] ) ) ] = self::escapeStrings( $stat );
+				}
+			}
+		}
+
+		return $parsedData;
+	}
+
+	/**
+	 * General-purpose html-escaper.
+	 * Recurses into an array and escapes all keys and scalar values encountered.
+	 *
+	 * @param array|string $arrayOrString The string to escape.
+	 * @return array|string The escaped result.
+	 */
+	private static function escapeStrings( $arrayOrString ) {
+		if ( is_scalar( $arrayOrString ) ) {
+			return htmlspecialchars( $arrayOrString, ENT_QUOTES );
+		}
+		if ( is_array( $arrayOrString ) ) {
+			$rtr = [];
+			foreach ( $arrayOrString as $key => $value ) {
+				$rtr[ self::escapeStrings( $key ) ] = self::escapeStrings( $value );
+			}
+			return $rtr;
+		}
+		// This should not happen
+		throw new Exception( 'rshiscores-error-unexpected-json' );
+	}
+
+	/**
+	 * Get data for specific skill and type from $data.
+	 *
+	 * @param array $data The data fetched from the endpoint, and processed by self::postFetch
+	 * @param string $skill The skill to search for in the data.
+	 * @param string $type The type (xp/rank/score/level/self::DEFAULT_TYPE) of data to get for the skill.
+	 *
+	 * @return string The requested data
+	 *
+	 * @throws Exception If $skill or $type could not be found, or if endpoint returned unexpected results
+	 */
+	private static function getSingleSkillData( $data, $skill, $type ) {
+		// Case-insensitive, use same processing as self::postFetch did
+		$skill = self::escapeStrings( strtolower( $skill ) );
+		if ( !isset( $data[ $skill ] ) ) {
+			// Error: Skill/activity is unknown. Maybe they changed the spelling?
+			throw new Exception( wfMessage( 'rshiscores-error-unknown-skill' ) );
+		}
+		if ( $type === self::DEFAULT_TYPE ) {
+			if ( isset( $data[ $skill ][ 'level' ] ) ) {
+				$type = 'level';
+			} else {
+				$type = 'score';
+			}
+		}
+		if ( !isset( $data[ $skill ][ $type ] ) ) {
+			// Error: Type is unknown. Maybe you asked xp for an activity, or vise-versa?
+			throw new Exception( wfMessage( 'rshiscores-error-unknown-type' ) );
+		}
+		if ( !is_scalar( $data[ $skill ][ $type ] ) ) {
+			// Error: Endpoint did not give a scalar as result. Should not happen.
+			throw new Exception( wfMessage( 'rshiscores-error-unexpected-value' ) );
+		}
+		return $data[ $skill ][ $type ];
 	}
 
 	/**
@@ -254,12 +312,12 @@ class RSHiScores {
 	 * @param Parser &$parser
 	 * @param string $api Which HiScores API to use.
 	 * @param string $player Player's display name. Can not be empty.
-	 * @param int $skill Index representing the requested skill. Leave as -1 for requesting the raw data.
-	 * @param int $type Index representing the requested type of data for the given skill.
+	 * @param string $skill String representing the requested skill. Leave as self::ALL_SKILLS for requesting the raw data.
+	 * @param string $type String representing the requested type of data for the given skill. Leave as self::DEFAULT_TYPE to get xp for skills, score for activities
 	 *
 	 * @return string
 	 */
-	public static function render( Parser &$parser, $api = 'rs3', $player = '', $skill = '-1', $type = '1' ) {
+	public static function render( Parser &$parser, $api = 'rs3', $player = '', $skill = self::ALL_SKILLS, $type = self::DEFAULT_TYPE ) {
 		try {
 			$ret = self::lookup( $api, $player, $skill, $type );
 		} catch ( Exception $e ) {
