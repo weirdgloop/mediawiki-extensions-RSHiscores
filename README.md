@@ -21,8 +21,8 @@ $wgRSHiScoresNameLimit = 2;
 `{{#hs:API|Name|Skill|Type}}`
 - `API` is the name of the HiScores API to get data from.
 - `Name` is the name of the player to get data for.
-- `Skill` is a string representation of the skill or activity. See [RS3 Skills](#rs3-skills) or [OSRS Skills](#osrs-skills) for the known skill values.
-- `Type` is a string representation that refers to the type of data to return, see [Types](#types) for valid values.
+- `Skill` is a string representation of the skill or activity. See [RS3 Skills](#rs3-skills) or [OSRS Skills](#osrs-skills) for the known skill values. Numbers are also allowed, for backwards compatibility.
+- `Type` is a string representation that refers to the type of data to return, see [Types](#types) for valid values. Numbers are also allowed, for backwards compatibility.
 
 If an error occurs, then an error message will be returned. See [Errors](#errors) for possible errors.
 
@@ -42,188 +42,188 @@ If an error occurs, then an error message will be returned. See [Errors](#errors
 
 ## RS3 Skills
 *Note: These could be changed by jagex at any time. Use the jsondump format to get the most recent values*
-| string | Notes |
-| ------ | ----- |
-| jsondump | Returns the raw data. (default) |
-| overall |
-| attack |
-| defence |
-| strength |
-| hitpoints |
-| ranged |
-| prayer |
-| magic |
-| cooking |
-| woodcutting |
-| fletching |
-| fishing |
-| firemaking |
-| crafting |
-| smithing |
-| mining |
-| herblore |
-| agility |
-| thieving |
-| slayer |
-| farming |
-| runecraft |
-| hunter |
-| construction |
-| summoning |
-| dungeoneering |
-| divination |
-| invention |
-| archaeology |
-| necromancy |
-| bounty hunters |
-| bounty hunter rogues |
-| dominion tower |
-| the crucible |
-| castle wars games |
-| b.a attackers |
-| b.a defenders |
-| b.a collectors |
-| b.a healers |
-| duel tournament |
-| mobilising armies |
-| conquest |
-| fist of guthix |
-| gg: resource race |
-| gg: athletics |
-| we2 armadyl lifetime contribution |
-| we2 bandos lifetime contribution |
-| we2 armadyl pvp kills |
-| we2 bandos pvp kills |
-| heist: guard prestige |
-| heist: robber prestige |
-| cfp: 5 game average |
-| cow tips |
-| rats slaughtered |
-| runescore |
-| clue scrolls (easy) |
-| clue scrolls (medium) |
-| clue scrolls (hard) |
-| clue scrolls (elite) |
-| clue scrolls (master) |
+| Number | string | Notes |
+| ------ | ------ | ----- |
+| -1     | jsondump | Returns the raw data. (default) |
+| 0      | overall |
+| 1      | attack |
+| 2      | defence |
+| 3      | strength |
+| 4      | hitpoints |
+| 5      | ranged |
+| 6      | prayer |
+| 7      | magic |
+| 8      | cooking |
+| 9      | woodcutting |
+| 10     | fletching |
+| 11     | fishing |
+| 12     | firemaking |
+| 13     | crafting |
+| 14     | smithing |
+| 15     | mining |
+| 16     | herblore |
+| 17     | agility |
+| 18     | thieving |
+| 19     | slayer |
+| 20     | farming |
+| 21     | runecraft |
+| 22     | hunter |
+| 23     | construction |
+| 24     | summoning |
+| 25     | dungeoneering |
+| 26     | divination |
+| 27     | invention |
+| 28     | archaeology |
+| 29     | necromancy |
+| 30     | bounty hunters |
+| 31     | bounty hunter rogues |
+| 32     | dominion tower |
+| 33     | the crucible |
+| 34     | castle wars games |
+| 35     | b.a attackers |
+| 36     | b.a defenders |
+| 37     | b.a collectors |
+| 38     | b.a healers |
+| 39     | duel tournament |
+| 40     | mobilising armies |
+| 41     | conquest |
+| 42     | fist of guthix |
+| 43     | gg: resource race |
+| 44     | gg: athletics |
+| 45     | we2 armadyl lifetime contribution |
+| 46     | we2 bandos lifetime contribution |
+| 47     | we2 armadyl pvp kills |
+| 48     | we2 bandos pvp kills |
+| 49     | heist: guard prestige |
+| 50     | heist: robber prestige |
+| 51     | cfp: 5 game average |
+| 52     | cow tips |
+| 53     | rats slaughtered |
+| 54     | runescore |
+| 55     | clue scrolls (easy) |
+| 56     | clue scrolls (medium) |
+| 57     | clue scrolls (hard) |
+| 58     | clue scrolls (elite) |
+| 59     | clue scrolls (master) |
 
 ## OSRS Skills
 *Note: These could be changed by jagex at any time. Use the jsondump format to get the most recent values*
-| String | Notes |
-| ------ | ----- |
-| jsondump | Returns the raw data. (default) |
-| overall |
-| attack |
-| defence |
-| strength |
-| hitpoints |
-| ranged |
-| prayer |
-| magic |
-| cooking |
-| woodcutting |
-| fletching |
-| fishing |
-| firemaking |
-| crafting |
-| smithing |
-| mining |
-| herblore |
-| agility |
-| thieving |
-| slayer |
-| farming |
-| runecraft |
-| hunter |
-| construction |
-| league points |
-| deadman points |
-| bounty hunter - hunter |
-| bounty hunter - rogue |
-| bounty hunter (legacy) - hunter |
-| bounty hunter (legacy) - rogue |
-| clue scrolls (all) |
-| clue scrolls (beginner) |
-| clue scrolls (easy) |
-| clue scrolls (medium) |
-| clue scrolls (hard) |
-| clue scrolls (elite) |
-| clue scrolls (master) |
-| lms - rank |
-| pvp arena - rank |
-| soul wars zeal |
-| rifts closed |
-| colosseum glory |
-| abyssal sire |
-| alchemical hydra |
-| araxxor |
-| artio |
-| barrows chests |
-| bryophyta |
-| callisto |
-| calvar'ion |
-| cerberus |
-| chambers of xeric |
-| chambers of xeric: challenge mode |
-| chaos elemental |
-| chaos fanatic |
-| commander zilyana |
-| corporeal beast |
-| crazy archaeologist |
-| dagannoth prime |
-| dagannoth rex |
-| dagannoth supreme |
-| deranged archaeologist |
-| duke sucellus |
-| general graardor |
-| giant mole |
-| grotesque guardians |
-| hespori |
-| kalphite queen |
-| king black dragon |
-| kraken |
-| kree'arra |
-| k'ril tsutsaroth |
-| lunar chests |
-| mimic |
-| nex |
-| nightmare |
-| phosani's nightmare |
-| obor |
-| phantom muspah |
-| sarachnis |
-| scorpia |
-| scurrius |
-| skotizo |
-| sol heredit |
-| spindel |
-| tempoross |
-| the gauntlet |
-| the corrupted gauntlet |
-| the leviathan |
-| the whisperer |
-| theatre of blood |
-| theatre of blood: hard mode |
-| thermonuclear smoke devil |
-| tombs of amascut |
-| tombs of amascut: expert mode |
-| tzkal-zuk |
-| tztok-jad |
-| vardorvis |
-| venenatis |
-| vet'ion |
-| vorkath |
-| wintertodt |
-| zalcano |
-| zulrah |
+| Number | String | Notes |
+| ------ | ------ | ----- |
+| -1     | jsondump | Returns the raw data. (default) |
+| 0      | overall |
+| 1      | attack |
+| 2      | defence |
+| 3      | strength |
+| 4      | hitpoints |
+| 5      | ranged |
+| 6      | prayer |
+| 7      | magic |
+| 8      | cooking |
+| 9      | woodcutting |
+| 10     | fletching |
+| 11     | fishing |
+| 12     | firemaking |
+| 13     | crafting |
+| 14     | smithing |
+| 15     | mining |
+| 16     | herblore |
+| 17     | agility |
+| 18     | thieving |
+| 19     | slayer |
+| 20     | farming |
+| 21     | runecraft |
+| 22     | hunter |
+| 23     | construction |
+| 24     | league points |
+| 25     | deadman points |
+| 26     | bounty hunter - hunter |
+| 27     | bounty hunter - rogue |
+| 28     | bounty hunter (legacy) - hunter |
+| 29     | bounty hunter (legacy) - rogue |
+| 30     | clue scrolls (all) |
+| 31     | clue scrolls (beginner) |
+| 32     | clue scrolls (easy) |
+| 33     | clue scrolls (medium) |
+| 34     | clue scrolls (hard) |
+| 35     | clue scrolls (elite) |
+| 36     | clue scrolls (master) |
+| 37     | lms - rank |
+| 38     | pvp arena - rank |
+| 39     | soul wars zeal |
+| 40     | rifts closed |
+| 41     | colosseum glory |
+| 42     | abyssal sire |
+| 43     | alchemical hydra |
+| 44     | araxxor |
+| 45     | artio |
+| 46     | barrows chests |
+| 47     | bryophyta |
+| 48     | callisto |
+| 49     | calvar'ion |
+| 50     | cerberus |
+| 51     | chambers of xeric |
+| 52     | chambers of xeric: challenge mode |
+| 53     | chaos elemental |
+| 54     | chaos fanatic |
+| 55     | commander zilyana |
+| 56     | corporeal beast |
+| 57     | crazy archaeologist |
+| 58     | dagannoth prime |
+| 59     | dagannoth rex |
+| 60     | dagannoth supreme |
+| 61     | deranged archaeologist |
+| 62     | duke sucellus |
+| 63     | general graardor |
+| 64     | giant mole |
+| 65     | grotesque guardians |
+| 66     | hespori |
+| 67     | kalphite queen |
+| 68     | king black dragon |
+| 69     | kraken |
+| 70     | kree'arra |
+| 71     | k'ril tsutsaroth |
+| 72     | lunar chests |
+| 73     | mimic |
+| 74     | nex |
+| 75     | nightmare |
+| 76     | phosani's nightmare |
+| 77     | obor |
+| 78     | phantom muspah |
+| 79     | sarachnis |
+| 80     | scorpia |
+| 81     | scurrius |
+| 82     | skotizo |
+| 83     | sol heredit |
+| 84     | spindel |
+| 85     | tempoross |
+| 86     | the gauntlet |
+| 87     | the corrupted gauntlet |
+| 88     | the leviathan |
+| 89     | the whisperer |
+| 90     | theatre of blood |
+| 91     | theatre of blood: hard mode |
+| 92     | thermonuclear smoke devil |
+| 93     | tombs of amascut |
+| 94     | tombs of amascut: expert mode |
+| 95     | tzkal-zuk |
+| 96     | tztok-jad |
+| 97     | vardorvis |
+| 98     | venenatis |
+| 99     | vet'ion |
+| 100    | vorkath |
+| 101    | wintertodt |
+| 102    | zalcano |
+| 103    | zulrah |
 
 ## Types
-| String | Notes           |
-| ------ | --------------- |
-| auto   | Level for skills, score for activities |
-| xp     | Only for skills |
-| level  | Only for skills |
-| rank   |                 |
-| score  | Only for activities. Corresponds to boss kc for bosses |
+| Number | String | Notes           |
+| ------ | ------ | --------------- |
+| 1      | auto   | Level for skills, score for activities (default) |
+| 2      | xp     | Only for skills |
+| -      | level  | Only for skills |
+| 0      | rank   |                 |
+| -      | score  | Only for activities. Corresponds to boss kc for bosses |
 
 ## Errors
 If there is an error in the usage or request, a message describing the error will be returned instead.
@@ -232,8 +232,6 @@ If there is an error in the usage or request, a message describing the error wil
 | ------- | ------- |
 | No player name entered. |
 | Too many players requested. No more than $1 are allowed. |
-| Skill parameter must not be a number. | Older version of extension required numbers for skill and type. This version requires strings |
-| Type parameter must not be a number. | Older version of extension required numbers for skill and type. This version requires strings |
 | See previous error. | An error has already occurred in earlier usage. |
 | Failed to retrieve player data. Try again later. | An HTTP error occurred, possibly the wiki made too many requests and is temporarily blocked. |
 | The API requested does not exist. | See [above](#api) for the valid APIs.
