@@ -174,17 +174,25 @@ class RSHiScores {
 
 		$player = trim( $player );
 
+		$skillIsInt = filter_var( $skill, FILTER_VALIDATE_INT ) !== false;
+		if ( $skillIsInt && $skill < 0 ) {
+			// Semi-backwards compatible: Previously, skill < 0 meant "get all data"
+			$skill = self::ALL_SKILLS;
+			$skillIsInt = false;
+		}
+
+		if ( filter_var( $type, FILTER_VALIDATE_INT ) !== false ) {
+			// Semi-backwards compatibility: If type is int, they used to refer to these values;
+			$type = [
+				'rank',
+				self::DEFAULT_TYPE,
+				'xp',
+			][$type];
+		}
+
 		if( $player === '' ) {
 			// Error: No player name was entered.
 			throw new Exception( wfMessage( 'rshiscores-error-empty-rsn' ) );
-
-		} elseif ( filter_var( $skill, FILTER_VALIDATE_INT ) !== false ) {
-			// Error: Skill parameter must not be a number; That was old behaviour
-			throw new Exception( wfMessage( 'rshiscores-error-invalid-skill' ) );
-
-		} elseif ( filter_var( $type, FILTER_VALIDATE_INT ) !== false ) {
-			// Error: Type parameter must be a number; That was old behaviour
-			throw new Exception( wfMessage( 'rshiscores-error-invalid-type' ) );
 
 		} elseif ( array_key_exists( $api, self::$cache ) && array_key_exists( $player, self::$cache[$api] ) ) {
 			// Get the HiScores data from the cache.
@@ -217,7 +225,7 @@ class RSHiScores {
 		if ( $skill === self::ALL_SKILLS ) {
 			return json_encode( $data );
 		} else {
-			return self::getSingleSkillData( $data, $skill, $type );
+			return self::getSingleSkillData( $data, $skill, $type, $skillIsInt );
 		}
 	}
 
@@ -276,14 +284,23 @@ class RSHiScores {
 	 * @param array $data The data fetched from the endpoint, and processed by self::postFetch
 	 * @param string $skill The skill to search for in the data.
 	 * @param string $type The type (xp/rank/score/level/self::DEFAULT_TYPE) of data to get for the skill.
+	 * @param bool $fromInt Should $skill be interpreted as an integer?
 	 *
 	 * @return string The requested data
 	 *
 	 * @throws Exception If $skill or $type could not be found, or if endpoint returned unexpected results
 	 */
-	private static function getSingleSkillData( $data, $skill, $type ) {
+	private static function getSingleSkillData( $data, $skill, $type, $fromInt ) {
 		// Case-insensitive, use same processing as self::postFetch did
-		$skill = self::escapeStrings( strtolower( $skill ) );
+		if ( $fromInt ) {
+			if ( (int) $skill >= count($data) ) {
+				throw new Exception( wfMessage( 'rshiscores-error-unknown-skill' ) );
+			}
+			// Semi-backwards compatibility: If skill is integer "n", take the "n"th element of the data.
+			$skill = array_keys( $data )[ $skill ];
+		} else {
+			$skill = self::escapeStrings( strtolower( $skill ) );
+		}
 		if ( !isset( $data[ $skill ] ) ) {
 			// Error: Skill/activity is unknown. Maybe they changed the spelling?
 			throw new Exception( wfMessage( 'rshiscores-error-unknown-skill' ) );

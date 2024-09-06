@@ -6,13 +6,11 @@
 	"rshiscores-error-empty-rsn": "No player name entered.",
 	"rshiscores-error-exceeded-limit": "Too many players requested. No more than $1 are allowed.",
 	"rshiscores-error-invalid-json": "The highscores endpoint returned unexpected results.",
-	"rshiscores-error-invalid-skill": "Skill parameter must not be a number, but a skill/activity name (e.g. 'cooking').",
-	"rshiscores-error-invalid-type": "Type parameter must not be a number, but a type name (xp/rank/score/level).",
 	"rshiscores-error-previous": "See previous error.",
 	"rshiscores-error-request-failed": "Failed to retrieve player data. Try again later.",
 	"rshiscores-error-unexpected-value": "The value for this skill could not be parsed.",
 	"rshiscores-error-unknown-api": "The API requested does not exist.",
 	"rshiscores-error-unknown-player": "Player '$1' does not exist.",
-	"rshiscores-error-unknown-skill": "The skill requested does not exist.",
-	"rshiscores-error-unknown-type": "The type requested does not exist."
+	"rshiscores-error-unknown-skill": "The skill or activity requested does not exist.",
+	"rshiscores-error-unknown-type": "The type requested does not exist for this skill or activity."
 }

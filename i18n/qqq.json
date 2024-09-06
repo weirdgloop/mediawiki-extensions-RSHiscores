@@ -6,8 +6,6 @@
 	"rshiscores-error-empty-rsn": "Error message for missing player name.",
 	"rshiscores-error-exceeded-limit": "Error message for when $wgRSHiScoresNameLimit is exceeded.",
 	"rshiscores-error-invalid-json": "Error message when Jagex endpoint returned unexpected json format.",
-	"rshiscores-error-invalid-skill": "Error message for when the skill parameter provided is numeric. That was old behaviour.",
-	"rshiscores-error-invalid-type": "Error message for when the type parameter provided is numeric. That was old behaviour.",
 	"rshiscores-error-previous": "Error message for when a previous error has occurred.",
 	"rshiscores-error-request-failed": "Error message for when the HTTP request failed.",
 	"rshiscores-error-unexpected-value": "Error message when value returned by the api was not string or integer.",
