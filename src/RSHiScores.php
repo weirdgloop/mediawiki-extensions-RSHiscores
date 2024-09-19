@@ -291,7 +291,6 @@ class RSHiScores {
 	 * @throws Exception If $skill or $type could not be found, or if endpoint returned unexpected results
 	 */
 	private static function getSingleSkillData( $data, $skill, $type, $fromInt ) {
-		// Case-insensitive, use same processing as self::postFetch did
 		if ( $fromInt ) {
 			if ( (int) $skill >= count($data) ) {
 				throw new Exception( wfMessage( 'rshiscores-error-unknown-skill' ) );
@@ -299,6 +298,7 @@ class RSHiScores {
 			// Semi-backwards compatibility: If skill is integer "n", take the "n"th element of the data.
 			$skill = array_keys( $data )[ $skill ];
 		} else {
+			// Case-insensitive, use same processing as self::postFetch did
 			$skill = self::escapeStrings( strtolower( $skill ) );
 		}
 		if ( !isset( $data[ $skill ] ) ) {
