@@ -79,10 +79,10 @@ class RSHiScores {
 				$url = 'https://secure.runescape.com/m=hiscore_oldschool_ultimate/index_lite.json?player=';
 				break;
 			case 'osrs-skiller':
-				$url = 'https://secure.runescape.com/m=hiscore_oldschool_skiller/index_lite.ws?player=';
+				$url = 'https://secure.runescape.com/m=hiscore_oldschool_skiller/index_lite.json?player=';
 				break;
 			case 'osrs-pure':
-				$url = 'https://secure.runescape.com/m=hiscore_oldschool_skiller_defence/index_lite.ws?player=';
+				$url = 'https://secure.runescape.com/m=hiscore_oldschool_skiller_defence/index_lite.json?player=';
 				break;
 			case 'osrs-deadman':
 				$url = 'https://secure.runescape.com/m=hiscore_oldschool_deadman/index_lite.json?player=';
