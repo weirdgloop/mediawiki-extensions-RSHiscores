@@ -8,6 +8,7 @@
 	"rshiscores-error-invalid-json": "The highscores endpoint returned unexpected results.",
 	"rshiscores-error-previous": "See previous error.",
 	"rshiscores-error-request-failed": "Failed to retrieve player data. Try again later.",
+	"rshiscores-error-type-out-of-bounds": "Type entered should be a number between 0 and 2 inclusive, or a string (e.g. 'xp', 'score', 'rank')",
 	"rshiscores-error-unexpected-value": "The value for this skill could not be parsed.",
 	"rshiscores-error-unknown-api": "The API requested does not exist.",
 	"rshiscores-error-unknown-player": "Player '$1' does not exist.",

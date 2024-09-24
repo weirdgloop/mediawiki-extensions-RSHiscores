@@ -94,7 +94,7 @@ class RSHiScores {
 				$url = 'https://secure.runescape.com/m=hiscore_oldschool_tournament/index_lite.json?player=';
 				break;
 			default:
-				// Error: Unknown API. Should never be reached, because it is already checked in self::lookup().
+				// Error: Unknown API.
 				throw new Exception( wfMessage( 'rshiscores-error-unknown-api' ) );
 		}
 
@@ -183,11 +183,19 @@ class RSHiScores {
 
 		if ( filter_var( $type, FILTER_VALIDATE_INT ) !== false ) {
 			// Semi-backwards compatibility: If type is int, they used to refer to these values;
-			$type = [
-				'rank',
-				self::DEFAULT_TYPE,
-				'xp',
-			][$type];
+			switch ($type) {
+				case 0:
+					$type = 'rank';
+					break;
+				case 1:
+					$type = self::DEFAULT_TYPE;
+					break;
+				case 2:
+					$type = 'xp';
+					break;
+				default:
+					throw new Exception( wfMessage( 'rshiscores-error-type-out-of-bounds' ) );
+			}
 		}
 
 		if( $player === '' ) {
@@ -248,12 +256,12 @@ class RSHiScores {
 		foreach ( $data as $skillOrActivity => $stats ) {
 			foreach ( $stats as $stat ) {
 				if ( isset( $stat['name'] ) ) {
-					$parsedData[ self::escapeStrings( strtolower( $stat[ 'name' ] ) ) ] = self::escapeStrings( $stat );
+					$parsedData[ strtolower( $stat[ 'name' ] ) ] = $stat;
 				}
 			}
 		}
 
-		return $parsedData;
+		return self::escapeStrings( $parsedData );
 	}
 
 	/**
