@@ -6,7 +6,7 @@
 		"[https://runescape.wiki/w/User:Quarenon Quarenon]",
 		"[https://runescape.wiki/w/User:Cqm Cqm]"
 	],
-	"url": "https://gitlab.com/weirdgloop/extensions/rshiscores",
+	"url": "https://github.com/weirdgloop/mediawiki-extensions-RSHiscores",
 	"descriptionmsg": "rshiscores-desc",
 	"license-name": "GPL-3.0+",
 	"type": "parserhook",
