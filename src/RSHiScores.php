@@ -11,8 +11,8 @@
 namespace MediaWiki\Extension\RSHiScores;
 
 use MediaWiki\MediaWikiServices;
-use Parser;
-use Status;
+use MediaWiki\Parser\Parser;
+use MediaWiki\Status\Status;
 
 class RSHiScores {
 	public static $cache = [];
