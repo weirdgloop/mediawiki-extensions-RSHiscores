@@ -21,131 +21,222 @@ $wgRSHiScoresNameLimit = 2;
 `{{#hs:API|Name|Skill|Type}}`
 - `API` is the name of the HiScores API to get data from.
 - `Name` is the name of the player to get data for.
-- `Skill` is a number that refers to a skill or activity as found in the HiScores API, See [RS3 Skills](#rs3-skills) or [OSRS Skills](#osrs-skills) for the known skill values.
-- `Type` is a number that refers to the type of data to return, see [Types](#types) for valid values.
+- `Skill` is a string representation of the skill or activity. See [RS3 Skills](#rs3-skills) or [OSRS Skills](#osrs-skills) for the known skill values. Numbers are also allowed, for backwards compatibility.
+- `Type` is a string representation that refers to the type of data to return, see [Types](#types) for valid values. Numbers are also allowed, for backwards compatibility.
 
 If an error occurs, then an error message will be returned. See [Errors](#errors) for possible errors.
 
 ## API
-| Name   | API                   |
-| ------ | --------------------- |
-| rs3    | RuneScape             |
-| osrs   | Old School RuneScape  |
+| Name            | API                                        |
+| --------------- | ------------------------------------------ |
+| rs3             | RuneScape                                  |
+| rs3-hardcore    | RuneScape Hardcore Ironman Mode            |
+| rs3-ironman     | RuneScape Ironman Mode                     |
+| osrs            | Old School RuneScape                       |
+| osrs-deadman    | Old School RuneScape Deadman Mode          |
+| osrs-hardcore   | Old School RuneScape Hardcore Ironman Mode |
+| osrs-ironman    | Old School RuneScape Ironman Mode          |
+| osrs-seasonal   | Old School RuneScape Seasonal Mode         |
+| osrs-tournament | Old School RuneScape Tournament Mode       |
+| osrs-ultimate   | Old School RuneScape Ultimate Ironman Mode |
 
 ## RS3 Skills
-| Number | Skill/Activity                     |
-| ------ | ---------------------------------- |
-| -1     | Returns the raw data. (default)    |
-| 0      | Overall                            |
-| 1      | Attack                             |
-| 2      | Defence                            |
-| 3      | Strength                           |
-| 4      | Constitution                       |
-| 5      | Ranged                             |
-| 6      | Prayer                             |
-| 7      | Magic                              |
-| 8      | Cooking                            |
-| 9      | Woodcutting                        |
-| 10     | Fletching                          |
-| 11     | Fishing                            |
-| 12     | Firemaking                         |
-| 13     | Crafting                           |
-| 14     | Smithing                           |
-| 15     | Mining                             |
-| 16     | Herblore                           |
-| 17     | Agility                            |
-| 18     | Thieving                           |
-| 19     | Slayer                             |
-| 20     | Farming                            |
-| 21     | Runecrafting                       |
-| 22     | Hunter                             |
-| 23     | Construction                       |
-| 24     | Summoning                          |
-| 25     | Dungeoneering                      |
-| 26     | Divination                         |
-| 27     | Invention                          |
-| 28     | Bounty Hunter                      |
-| 29     | Bounty Hunter Rogue                |
-| 30     | Dominion Tower                     |
-| 31     | The Crucible                       |
-| 32     | Castle Wars Games                  |
-| 33     | B.A. Attackers                     |
-| 34     | B.A. Defenders                     |
-| 35     | B.A. Collectors                    |
-| 36     | B.A. Healers                       |
-| 37     | Duel Tournament                    |
-| 38     | Mobilising Armies                  |
-| 39     | Conquest                           |
-| 40     | Fist of Guthix                     |
-| 41     | GG: Resource Race                  |
-| 42     | GG: Athletics                      |
-| 43     | WE2: Armadyl Lifetime Contribution |
-| 44     | WE2: Bandos Lifetime Contribution  |
-| 45     | WE2: Armadyl PvP Kills             |
-| 46     | WE2: Bandos PvP Kills              |
-| 47     | Heist Guard Level                  |
-| 48     | Heist Robber Level                 |
-| 49     | CFP: 5 Game Average                |
-| 50     | AF15: Cow tipping                  |
-| 51     | AF15: Rat kills after miniquest    |
+*Note: These could be changed by jagex at any time. Use the jsondump format to get the most recent values*
+| Number | string | Notes |
+| ------ | ------ | ----- |
+| -1     | jsondump | Returns the raw data. (default) |
+| 0      | overall |
+| 1      | attack |
+| 2      | defence |
+| 3      | strength |
+| 4      | hitpoints |
+| 5      | ranged |
+| 6      | prayer |
+| 7      | magic |
+| 8      | cooking |
+| 9      | woodcutting |
+| 10     | fletching |
+| 11     | fishing |
+| 12     | firemaking |
+| 13     | crafting |
+| 14     | smithing |
+| 15     | mining |
+| 16     | herblore |
+| 17     | agility |
+| 18     | thieving |
+| 19     | slayer |
+| 20     | farming |
+| 21     | runecraft |
+| 22     | hunter |
+| 23     | construction |
+| 24     | summoning |
+| 25     | dungeoneering |
+| 26     | divination |
+| 27     | invention |
+| 28     | archaeology |
+| 29     | necromancy |
+| 30     | bounty hunters |
+| 31     | bounty hunter rogues |
+| 32     | dominion tower |
+| 33     | the crucible |
+| 34     | castle wars games |
+| 35     | b.a attackers |
+| 36     | b.a defenders |
+| 37     | b.a collectors |
+| 38     | b.a healers |
+| 39     | duel tournament |
+| 40     | mobilising armies |
+| 41     | conquest |
+| 42     | fist of guthix |
+| 43     | gg: resource race |
+| 44     | gg: athletics |
+| 45     | we2 armadyl lifetime contribution |
+| 46     | we2 bandos lifetime contribution |
+| 47     | we2 armadyl pvp kills |
+| 48     | we2 bandos pvp kills |
+| 49     | heist: guard prestige |
+| 50     | heist: robber prestige |
+| 51     | cfp: 5 game average |
+| 52     | cow tips |
+| 53     | rats slaughtered |
+| 54     | runescore |
+| 55     | clue scrolls (easy) |
+| 56     | clue scrolls (medium) |
+| 57     | clue scrolls (hard) |
+| 58     | clue scrolls (elite) |
+| 59     | clue scrolls (master) |
 
 ## OSRS Skills
-| Number | Skill/Activity                     |
-| ------ | ---------------------------------- |
-| -1     | Returns the raw data. (default)    |
-| 0      | Overall                            |
-| 1      | Attack                             |
-| 2      | Defence                            |
-| 3      | Strength                           |
-| 4      | Hitpoints                          |
-| 5      | Ranged                             |
-| 6      | Prayer                             |
-| 7      | Magic                              |
-| 8      | Cooking                            |
-| 9      | Woodcutting                        |
-| 10     | Fletching                          |
-| 11     | Fishing                            |
-| 12     | Firemaking                         |
-| 13     | Crafting                           |
-| 14     | Smithing                           |
-| 15     | Mining                             |
-| 16     | Herblore                           |
-| 17     | Agility                            |
-| 18     | Thieving                           |
-| 19     | Slayer                             |
-| 20     | Farming                            |
-| 21     | Runecrafting                       |
-| 22     | Hunter                             |
-| 23     | Construction                       |
-| 24     | Clue Scrolls (easy)                |
-| 25     | Clue Scrolls (medium)              |
-| 26     | Clue Scrolls (all)                 |
-| 27     | Bounty Hunter - Rogue              |
-| 28     | Bounty Hunter - Hunter             |
-| 29     | Clue Scrolls (hard)                |
-| 30     | Last Man Standing - Rank           |
-| 31     | Clue Scrolls (elite)               |
-| 32     | Clue Scrolls (master)              |
+*Note: These could be changed by jagex at any time. Use the jsondump format to get the most recent values*
+| Number | String | Notes |
+| ------ | ------ | ----- |
+| -1     | jsondump | Returns the raw data. (default) |
+| 0      | overall |
+| 1      | attack |
+| 2      | defence |
+| 3      | strength |
+| 4      | hitpoints |
+| 5      | ranged |
+| 6      | prayer |
+| 7      | magic |
+| 8      | cooking |
+| 9      | woodcutting |
+| 10     | fletching |
+| 11     | fishing |
+| 12     | firemaking |
+| 13     | crafting |
+| 14     | smithing |
+| 15     | mining |
+| 16     | herblore |
+| 17     | agility |
+| 18     | thieving |
+| 19     | slayer |
+| 20     | farming |
+| 21     | runecraft |
+| 22     | hunter |
+| 23     | construction |
+| 24     | league points |
+| 25     | deadman points |
+| 26     | bounty hunter - hunter |
+| 27     | bounty hunter - rogue |
+| 28     | bounty hunter (legacy) - hunter |
+| 29     | bounty hunter (legacy) - rogue |
+| 30     | clue scrolls (all) |
+| 31     | clue scrolls (beginner) |
+| 32     | clue scrolls (easy) |
+| 33     | clue scrolls (medium) |
+| 34     | clue scrolls (hard) |
+| 35     | clue scrolls (elite) |
+| 36     | clue scrolls (master) |
+| 37     | lms - rank |
+| 38     | pvp arena - rank |
+| 39     | soul wars zeal |
+| 40     | rifts closed |
+| 41     | colosseum glory |
+| 42     | abyssal sire |
+| 43     | alchemical hydra |
+| 44     | araxxor |
+| 45     | artio |
+| 46     | barrows chests |
+| 47     | bryophyta |
+| 48     | callisto |
+| 49     | calvar'ion |
+| 50     | cerberus |
+| 51     | chambers of xeric |
+| 52     | chambers of xeric: challenge mode |
+| 53     | chaos elemental |
+| 54     | chaos fanatic |
+| 55     | commander zilyana |
+| 56     | corporeal beast |
+| 57     | crazy archaeologist |
+| 58     | dagannoth prime |
+| 59     | dagannoth rex |
+| 60     | dagannoth supreme |
+| 61     | deranged archaeologist |
+| 62     | duke sucellus |
+| 63     | general graardor |
+| 64     | giant mole |
+| 65     | grotesque guardians |
+| 66     | hespori |
+| 67     | kalphite queen |
+| 68     | king black dragon |
+| 69     | kraken |
+| 70     | kree'arra |
+| 71     | k'ril tsutsaroth |
+| 72     | lunar chests |
+| 73     | mimic |
+| 74     | nex |
+| 75     | nightmare |
+| 76     | phosani's nightmare |
+| 77     | obor |
+| 78     | phantom muspah |
+| 79     | sarachnis |
+| 80     | scorpia |
+| 81     | scurrius |
+| 82     | skotizo |
+| 83     | sol heredit |
+| 84     | spindel |
+| 85     | tempoross |
+| 86     | the gauntlet |
+| 87     | the corrupted gauntlet |
+| 88     | the leviathan |
+| 89     | the whisperer |
+| 90     | theatre of blood |
+| 91     | theatre of blood: hard mode |
+| 92     | thermonuclear smoke devil |
+| 93     | tombs of amascut |
+| 94     | tombs of amascut: expert mode |
+| 95     | tzkal-zuk |
+| 96     | tztok-jad |
+| 97     | vardorvis |
+| 98     | venenatis |
+| 99     | vet'ion |
+| 100    | vorkath |
+| 101    | wintertodt |
+| 102    | zalcano |
+| 103    | zulrah |
 
 ## Types
-| Number | Type                     |
-| ------ | ------------------------ |
-| 0      | Rank                     |
-| 1      | Level/Score (default)    |
-| 2      | Experience (Skills only) |
+| Number | String | Notes           |
+| ------ | ------ | --------------- |
+| 1      | auto   | Level for skills, score for activities (default) |
+| 2      | xp     | Only for skills |
+| -      | level  | Only for skills |
+| 0      | rank   |                 |
+| -      | score  | Only for activities. Corresponds to boss kc for bosses |
 
 ## Errors
 If there is an error in the usage or request, a message describing the error will be returned instead.
 
 | Message | Details |
 | ------- | ------- |
-| No player name entered. | <foo> |
+| No player name entered. |
 | Too many players requested. No more than $1 are allowed. |
-| Skill parameter must be a number. |
-| Type parameter must be a number. |
 | See previous error. | An error has already occurred in earlier usage. |
 | Failed to retrieve player data. Try again later. | An HTTP error occurred, possibly the wiki made too many requests and is temporarily blocked. |
 | The API requested does not exist. | See [above](#api) for the valid APIs.
-| Player '$1' does not exist. | <foo> |
-| The skill requested does not exist. | See [RS3 Skills](#rs3-skills) or [OSRS Skills](#osrs-skills) for the known valid skills. |
-| The type requested does not exist. | See [above](#Types) for the valid types. |
+| Player '$1' does not exist. |
+| The skill or activity requested does not exist. | See [RS3 Skills](#rs3-skills) or [OSRS Skills](#osrs-skills) for the known valid skills. |
+| The type requested does not exist for this skill or activity. | See [above](#Types) for the valid types. |
+| The highscores endpoint returned unexpected results. | The format of data received might have changed. Maybe this extension must be adjusted accordingly. |
+| The value for this skill could not be parsed. | The format of data received might have changed. Maybe this extension must be adjusted accordingly. |
